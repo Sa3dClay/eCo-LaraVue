@@ -6,7 +6,8 @@ use Illuminate\Http\Request;
 
 class AdminController extends Controller
 {
-    public function test() {
-        echo 'test';
+    public function __construct()
+    {
+        $this->middleware('isAdmin:api');
     }
 }

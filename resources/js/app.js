@@ -33,25 +33,56 @@ const store = new Vuex.Store({
         token: null,
         loggedIn: false
     },
+    getters: {
+        getUser(state) {
+            return state.user
+        },
+        getToken(state) {
+            return state.token
+        },
+        isLoggedIn(state) {
+            return state.loggedIn
+        }
+    },
     mutations: {
         login (state, payload) {
             state.loggedIn = true
             state.user = payload.user
             state.token = payload.token
+        },
+        logout (state) {
+            state.loggedIn = false
+            state.user = null
+            state.token = null
         }
     }
 })
 
 // Routes
 const routes = [
-    { path: '/', component: Home },
-    { path: '/login', component: Login },
-    { path: '/register', component: Register }
+    { path: '/', name: 'Home', component: Home },
+    { path: '/login', name: 'Login', component: Login },
+    { path: '/register', name: 'Register', component: Register }
 ]
 const router = new VueRouter({
     routes
 })
 
+// validate routes
+const authRoutes = ['Login', 'Register']
+
+router.beforeEach((to, from, next) => {
+    if(!authRoutes.includes(to.name) && !localStorage.getItem('vue-session-key')) next ({ name: 'Login' })
+    next()
+    
+    if(authRoutes.includes(to.name) && localStorage.getItem('vue-session-key')) next ({ name: 'Home' })
+})
+
+// axios token
+// let session = JSON.parse(localStorage.getItem('vue-session-key'))
+// axios.defaults.headers.common['Authorization'] = 'Bearer ' + session.token
+
+// vue instance
 new Vue({
     store,
     router,
@@ -60,5 +91,14 @@ new Vue({
         Home,
         Login,
         Register
-    }
+    },
+    created() {
+        if(this.$session.exists()) {
+            this.$store.commit('login', {
+                user: this.$session.get('user'),
+                token: this.$session.get('token')
+            })
+            // axios.defaults.headers.common['Authorization'] = 'Bearer ' + this.$session.get('token')
+        }
+    },
 }).$mount('#app')

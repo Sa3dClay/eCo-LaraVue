@@ -59,6 +59,8 @@
                             this.$session.set('user', res.data.data)
                             this.$session.set('token', res.data.token)
 
+                            axios.defaults.headers.common['Authorization'] = 'Bearer ' + this.$session.get('token')
+
                             this.$swal({
                                 icon: 'success',
                                 title: 'Logined Successfully!'

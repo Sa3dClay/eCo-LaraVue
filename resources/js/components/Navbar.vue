@@ -43,22 +43,32 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
+
 export default {
-    data: () => ({
-        loggedIn: false
-    }),
     methods: {
-        isLoggedIn() {
-            return this.$session.exists()
-        },
         logout() {
-            this.$session.destroy()
-            this.$router.push('/login')
-            this.loggedIn = false
+            // this.$session.destroy()
+
+            axios.post('api/auth/logout')
+                .then(res => {
+                    console.log(res)
+
+                    localStorage.clear()
+
+                    this.$store.commit('logout')
+                    this.$router.push('/login')
+                })
+                .catch(err => {
+                    console.log(err)
+                })
         }
     },
-    created() {
-        this.loggedIn = this.isLoggedIn
+    computed: {
+        ...mapGetters ({
+            loggedIn: 'isLoggedIn',
+            token: 'getToken'
+        })
     }
 }
 </script>

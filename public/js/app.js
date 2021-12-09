@@ -5273,6 +5273,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
+/* harmony import */ var vuex__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm.js");
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) { symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); } keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 //
 //
 //
@@ -5317,25 +5324,29 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
-  data: function data() {
-    return {
-      loggedIn: false
-    };
-  },
   methods: {
-    isLoggedIn: function isLoggedIn() {
-      return this.$session.exists();
-    },
     logout: function logout() {
-      this.$session.destroy();
-      this.$router.push('/login');
-      this.loggedIn = false;
+      var _this = this;
+
+      // this.$session.destroy()
+      axios.post('api/auth/logout').then(function (res) {
+        console.log(res);
+        localStorage.clear();
+
+        _this.$store.commit('logout');
+
+        _this.$router.push('/login');
+      })["catch"](function (err) {
+        console.log(err);
+      });
     }
   },
-  created: function created() {
-    this.loggedIn = this.isLoggedIn;
-  }
+  computed: _objectSpread({}, (0,vuex__WEBPACK_IMPORTED_MODULE_0__.mapGetters)({
+    loggedIn: 'isLoggedIn',
+    token: 'getToken'
+  }))
 });
 
 /***/ }),
@@ -5351,6 +5362,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
+/* harmony import */ var vuex__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm.js");
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) { symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); } keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 //
 //
 //
@@ -5359,15 +5377,12 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
-  methods: {
-    isLoggedIn: function isLoggedIn() {
-      return this.$session.exists();
-    },
-    getUser: function getUser() {
-      return this.$session.get('user');
-    }
-  }
+  computed: _objectSpread({}, (0,vuex__WEBPACK_IMPORTED_MODULE_0__.mapGetters)({
+    loggedIn: 'isLoggedIn',
+    user: 'getUser'
+  }))
 });
 
 /***/ }),
@@ -5446,6 +5461,8 @@ __webpack_require__.r(__webpack_exports__);
           _this.$session.set('user', res.data.data);
 
           _this.$session.set('token', res.data.token);
+
+          axios.defaults.headers.common['Authorization'] = 'Bearer ' + _this.$session.get('token');
 
           _this.$swal({
             icon: 'success',
@@ -5579,6 +5596,8 @@ __webpack_require__.r(__webpack_exports__);
 
           _this.$session.set('token', res.data.token);
 
+          axios.defaults.headers.common['Authorization'] = 'Bearer ' + _this.$session.get('token');
+
           _this.$swal({
             icon: 'success',
             title: 'Registered Successfully!'
@@ -5672,28 +5691,62 @@ var store = new vuex__WEBPACK_IMPORTED_MODULE_2__["default"].Store({
     token: null,
     loggedIn: false
   },
+  getters: {
+    getUser: function getUser(state) {
+      return state.user;
+    },
+    getToken: function getToken(state) {
+      return state.token;
+    },
+    isLoggedIn: function isLoggedIn(state) {
+      return state.loggedIn;
+    }
+  },
   mutations: {
     login: function login(state, payload) {
       state.loggedIn = true;
       state.user = payload.user;
       state.token = payload.token;
+    },
+    logout: function logout(state) {
+      state.loggedIn = false;
+      state.user = null;
+      state.token = null;
     }
   }
 }); // Routes
 
 var routes = [{
   path: '/',
+  name: 'Home',
   component: _pages_Home_vue__WEBPACK_IMPORTED_MODULE_9__["default"]
 }, {
   path: '/login',
+  name: 'Login',
   component: _pages_Login_vue__WEBPACK_IMPORTED_MODULE_10__["default"]
 }, {
   path: '/register',
+  name: 'Register',
   component: _pages_Register_vue__WEBPACK_IMPORTED_MODULE_11__["default"]
 }];
 var router = new vue_router__WEBPACK_IMPORTED_MODULE_1__["default"]({
   routes: routes
-});
+}); // validate routes
+
+var authRoutes = ['Login', 'Register'];
+router.beforeEach(function (to, from, next) {
+  if (!authRoutes.includes(to.name) && !localStorage.getItem('vue-session-key')) next({
+    name: 'Login'
+  });
+  next();
+  if (authRoutes.includes(to.name) && localStorage.getItem('vue-session-key')) next({
+    name: 'Home'
+  });
+}); // axios token
+// let session = JSON.parse(localStorage.getItem('vue-session-key'))
+// axios.defaults.headers.common['Authorization'] = 'Bearer ' + session.token
+// vue instance
+
 new vue__WEBPACK_IMPORTED_MODULE_0__["default"]({
   store: store,
   router: router,
@@ -5702,6 +5755,14 @@ new vue__WEBPACK_IMPORTED_MODULE_0__["default"]({
     Home: _pages_Home_vue__WEBPACK_IMPORTED_MODULE_9__["default"],
     Login: _pages_Login_vue__WEBPACK_IMPORTED_MODULE_10__["default"],
     Register: _pages_Register_vue__WEBPACK_IMPORTED_MODULE_11__["default"]
+  },
+  created: function created() {
+    if (this.$session.exists()) {
+      this.$store.commit('login', {
+        user: this.$session.get('user'),
+        token: this.$session.get('token')
+      }); // axios.defaults.headers.common['Authorization'] = 'Bearer ' + this.$session.get('token')
+    }
   }
 }).$mount('#app');
 
@@ -29147,9 +29208,9 @@ var render = function () {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c("div", { staticClass: "my-4" }, [
-    _vm.isLoggedIn()
+    _vm.loggedIn
       ? _c("h1", { staticClass: "text-center" }, [
-          _vm._v("\n        Welcome " + _vm._s(_vm.getUser().name) + "\n    "),
+          _vm._v("\n        Welcome " + _vm._s(_vm.user.name) + "\n    "),
         ])
       : _vm._e(),
   ])

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use JWTAuth;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Auth\Events\Registered;
 use App\Http\Requests\UserLoginRequest;
 use App\Http\Requests\UserRegisterRequest;
 
@@ -30,6 +31,8 @@ class AuthController extends Controller
         ]);
 
         $token = JWTAuth::fromUser($user);
+
+        event(new Registered($user));
 
         return response()->json([
             'data' => $user,

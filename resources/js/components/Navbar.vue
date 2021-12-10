@@ -2,7 +2,7 @@
     <div>
         <nav class="navbar navbar-expand-md navbar-dark bg-dark">
             <div class="container-fluid">
-                <a class="navbar-brand">BlueDev</a>
+                <a class="navbar-brand">eCo</a>
 
                 <button
                     type="button"

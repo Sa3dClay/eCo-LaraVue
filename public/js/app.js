@@ -29108,7 +29108,7 @@ var render = function () {
   return _c("div", [
     _c("nav", { staticClass: "navbar navbar-expand-md navbar-dark bg-dark" }, [
       _c("div", { staticClass: "container-fluid" }, [
-        _c("a", { staticClass: "navbar-brand" }, [_vm._v("BlueDev")]),
+        _c("a", { staticClass: "navbar-brand" }, [_vm._v("eCo")]),
         _vm._v(" "),
         _vm._m(0),
         _vm._v(" "),

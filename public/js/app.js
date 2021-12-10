@@ -5470,8 +5470,8 @@ __webpack_require__.r(__webpack_exports__);
           _this.$session.set('token', token); // axios auth headers
 
 
-          axios.defaults.headers.common['Authorization'] = 'Bearer ' + token;
-          console.log(axios.defaults.headers.common); // reset form
+          axios.defaults.headers.common['Authorization'] = 'Bearer ' + token; // console.log(axios.defaults.headers.common)
+          // reset form
 
           _this.resetForm(); // router
 
@@ -5619,8 +5619,7 @@ __webpack_require__.r(__webpack_exports__);
           _this.$session.set('token', token); // axios auth headers
 
 
-          axios.defaults.headers.common['Authorization'] = 'Bearer ' + token;
-          console.log(axios.defaults.headers.common); // reset form
+          axios.defaults.headers.common['Authorization'] = 'Bearer ' + token; // reset form
 
           _this.resetForm(); // router
 

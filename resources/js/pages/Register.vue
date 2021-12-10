@@ -97,7 +97,6 @@ export default {
 
                         // axios auth headers
                         axios.defaults.headers.common['Authorization'] = 'Bearer ' + token
-                        console.log(axios.defaults.headers.common)
 
                         // reset form
                         this.resetForm()

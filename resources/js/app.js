@@ -78,7 +78,7 @@ router.beforeEach((to, from, next) => {
     if(authRoutes.includes(to.name) && localStorage.getItem('vue-session-key')) next ({ name: 'Home' })
 })
 
-// axios token
+// get axios token from local storage session
 // let session = JSON.parse(localStorage.getItem('vue-session-key'))
 // axios.defaults.headers.common['Authorization'] = 'Bearer ' + session.token
 
@@ -98,7 +98,7 @@ new Vue({
                 user: this.$session.get('user'),
                 token: this.$session.get('token')
             })
-            // axios.defaults.headers.common['Authorization'] = 'Bearer ' + this.$session.get('token')
+            axios.defaults.headers.common['Authorization'] = 'Bearer ' + this.$session.get('token')
         }
     },
 }).$mount('#app')

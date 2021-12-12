@@ -44,7 +44,7 @@
                 email = this.loginForm.email,
                 password = this.loginForm.password
             ) {
-                console.log("Login:", email, password)
+                // console.log("Login:", email, password)
 
                 if(this.validateForm()) {
                     // axios

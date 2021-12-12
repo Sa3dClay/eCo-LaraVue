@@ -70,7 +70,7 @@ export default {
             email = this.registerForm.email,
             password = this.registerForm.password
         ) {
-            console.log("Register:", name, email, password)
+            // console.log("Register:", name, email, password)
 
             if(this.validateForm()) {
                 // axios

@@ -12,9 +12,43 @@ class ProductController extends Controller
 {
     public function getProducts()
     {
-        return Product::all();
+        $products = Product::all();
+        
+        $merged_products = $this->getDetails($products);
 
-        // need to get brand and category for each
+        return $merged_products;
+    }
+
+    public function getDetails($products)
+    {
+        $merged_products = array();
+
+        foreach($products as $product) {
+            $brand_category = DB::table('product_brand_category')
+                ->where('product_id', $product->id)
+                ->select('brand_id', 'category_id')
+                ->get();
+            
+            $brand_id = $brand_category[0]->brand_id;
+            $category_id = $brand_category[0]->category_id;
+
+            $brand_name = (DB::table('brands')
+                ->where('id', $brand_id)
+                ->select('name')
+                ->get())[0]->name;
+            
+            $category_name = (DB::table('categories')
+                ->where('id', $category_id)
+                ->select('name')
+                ->get())[0]->name;
+
+            $product->brand = $brand_name;
+            $product->category = $category_name;
+
+            array_push($merged_products, $product);
+        }
+
+        return $merged_products;
     }
 
     public function addProduct($req)

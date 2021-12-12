@@ -57,21 +57,23 @@ class ProductController extends Controller
         $last_product = Product::select('id')
             ->orderByDesc('id')
             ->first();
-        $last_id = $last_product->id;
-        // current product id
-        if($last_id > 0) {
-            $current_id = $last_id + 1;
+        
+        if( isset($last_product) && $last_product->id > 0 ) {
+            $current_id = $last_product->id + 1;
         } else {
             $current_id = 1;
         }
+
         // get product name
         $product_name = $req->name;
-        // generate sku
+        
+        // generate sku code
         $sku = Str::upper( Str::limit($product_name, 3, '') . $current_id . "-" . Str::random(5) );
 
         // get product image
         $product_image = $req->image;
-        // upload image to files
+        
+        // upload image to folder
         $image_name = time().'.' . explode('/', explode(':', substr($product_image, 0, strpos($product_image, ';')))[1])[1];
         \Image::make($product_image)->save(public_path('img/products/').$image_name);
         $req->merge(['image' => $image_name]);

@@ -75,7 +75,7 @@ class ProductController extends Controller
         
         // upload image to folder
         $image_name = time().'.' . explode('/', explode(':', substr($product_image, 0, strpos($product_image, ';')))[1])[1];
-        \Image::make($product_image)->save('img/products/' . $image_name);
+        \Image::make($product_image)->save(public_path('img/products/') . $image_name);
         $req->merge(['image' => $image_name]);
 
         // save the new product

@@ -1,7 +1,7 @@
 <template>
     <div class="my-4">
         <h1 class="text-center" v-if="loggedIn">
-            Welcome {{ user.name }}
+            Hello {{ user.name }} !
         </h1>
     </div>
 </template>

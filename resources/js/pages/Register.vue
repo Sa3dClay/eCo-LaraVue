@@ -80,7 +80,7 @@ export default {
                     password: password
                 })
                     .then(res => {
-                        console.log(res)
+                        // console.log(res)
                         let user = res.data.data
                         let token = res.data.token
 

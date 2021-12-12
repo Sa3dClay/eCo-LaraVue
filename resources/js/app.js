@@ -25,6 +25,8 @@ import App from './App.vue'
 import Home from './pages/Home.vue'
 import Login from './pages/Login.vue'
 import Register from './pages/Register.vue'
+import Products from './pages/products/index.vue'
+import ProductCreate from './pages/products/create.vue'
 
 // Store
 const store = new Vuex.Store({
@@ -62,7 +64,9 @@ const store = new Vuex.Store({
 const routes = [
     { path: '/', name: 'Home', component: Home },
     { path: '/login', name: 'Login', component: Login },
-    { path: '/register', name: 'Register', component: Register }
+    { path: '/register', name: 'Register', component: Register },
+    { path: '/products', name: 'Products', component: Products },
+    { path: '/products/create', name: 'ProductCreate', component: ProductCreate }
 ]
 const router = new VueRouter({
     routes
@@ -87,10 +91,7 @@ new Vue({
     store,
     router,
     components: {
-        App,
-        Home,
-        Login,
-        Register
+        App
     },
     created() {
         if(this.$session.exists()) {

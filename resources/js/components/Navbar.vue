@@ -52,7 +52,7 @@ export default {
 
             axios.post('api/auth/logout')
                 .then(res => {
-                    console.log(res)
+                    // console.log(res)
 
                     localStorage.clear()
 

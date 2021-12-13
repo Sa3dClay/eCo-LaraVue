@@ -11,6 +11,9 @@
     
         <!-- Scripts -->
         <script src="{{ asset('js/app.js') }}" defer></script>
+
+        {{-- Icon --}}
+        <link rel="shortcut icon" href="{{ 'img/logo/eco.png' }}">
     
         <!-- Fonts -->
         <link rel="dns-prefetch" href="//fonts.gstatic.com">

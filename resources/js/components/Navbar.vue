@@ -2,7 +2,9 @@
     <div>
         <nav class="navbar navbar-expand-md navbar-dark bg-dark">
             <div class="container-fluid">
-                <router-link class="navbar-brand" to="/">eCo</router-link>
+                <router-link class="navbar-brand" to="/">
+                    <img :src="'../img/logo/'+logo" alt="eco" width="40">
+                </router-link>
 
                 <button
                     type="button"
@@ -42,10 +44,21 @@
     </div>
 </template>
 
+<style lang="scss" scoped>
+    .navbar-brand {
+        img {
+            background-color: #fff;
+        }
+    }
+</style>
+
 <script>
 import { mapGetters } from 'vuex'
 
 export default {
+    data: () => ({
+        logo: 'eco.png'
+    }),
     methods: {
         logout() {
             // this.$session.destroy()

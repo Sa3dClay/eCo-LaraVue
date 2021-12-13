@@ -58,6 +58,7 @@ class ProductController extends Controller
             ->orderByDesc('id')
             ->first();
         
+        // check empty table
         if( isset($last_product) && $last_product->id > 0 ) {
             $current_id = $last_product->id + 1;
         } else {
@@ -73,10 +74,17 @@ class ProductController extends Controller
         // get product image
         $product_image = $req->image;
         
+        // set image name
+        // $image_name = time().'.' . explode('/', explode(':', substr($product_image, 0, strpos($product_image, ';')))[1])[1];
+
         // upload image to folder
-        $image_name = time().'.' . explode('/', explode(':', substr($product_image, 0, strpos($product_image, ';')))[1])[1];
-        \Image::make($product_image)->save(public_path('img/products/') . $image_name);
-        $req->merge(['image' => $image_name]);
+        // \Image::make($product_image)->save(public_path('img/products/') . $image_name);
+
+        // upload image to cloudinary and get image url
+        $image_url = cloudinary()->upload($product_image)->getSecurePath();
+
+        // update image with the new name
+        $req->merge(['image' => $image_url]);
 
         // save the new product
         $product = Product::create([

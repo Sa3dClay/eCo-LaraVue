@@ -5,11 +5,11 @@
         </div>
 
         <div
-            class="col-10 col-md-6 col-lg-4 my-2"
+            class="col-10 col-md-4 col-lg-3 my-2"
             v-for="product in products" :key="product.id"
         >
             <div class="card">
-                <img :src="'../img/products/'+product.image" alt="image" class="card-img-tot">
+                <img :src="product.image" alt="image" class="card-img-tot">
 
                 <div class="card-body text-center">
                     <h4 class="card-title text-uppercase">{{ product.name }}</h4>

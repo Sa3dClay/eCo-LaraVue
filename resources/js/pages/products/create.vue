@@ -5,13 +5,20 @@
                 <div class="card-body">
                     <h2 class="card-title text-center">Add New Product</h2>
 
-                    <form>
+                    <form @submit.prevent="create">
                         <div class="mb-3">
                             <label for="name" class="form-label">
                                 Product Name
                             </label>
 
-                            <input type="text" class="form-control" id="name" v-model="form.name" required>
+                            <input
+                                id="name"
+                                name="name"
+                                type="text"
+                                v-model="form.name"
+                                class="form-control"
+                                required
+                            >
                         </div>
 
                         <div class="mb-3">
@@ -20,17 +27,23 @@
                             <input
                                 @change='upload_image'
                                 class="form-control"
+                                name="image"
                                 type="file"
                                 id="image"
                             >
 
-                            <img :src="form.image" v-show="showImage" width="100" height="100" class="my-2">
+                            <img :src="form.image" v-if="showImage" width="100" height="100" class="my-2">
                         </div>
 
                         <div class="mb-3">
                             <label for="brand" class="form-label">Brand Name</label>
 
-                            <select class="form-select" id="brand" v-model="form.brand">
+                            <select
+                                id="brand"
+                                name="brand"
+                                class="form-select"
+                                v-model="form.brand"
+                            >
                                 <option
                                     v-for="brand in brands"
                                     :value="brand.id"
@@ -44,7 +57,12 @@
                         <div class="mb-3">
                             <label for="category" class="form-label">Brand Name</label>
 
-                            <select class="form-select" id="category" v-model="form.category">
+                            <select
+                                id="category"
+                                name="category"
+                                class="form-select"
+                                v-model="form.category"
+                            >
                                 <option
                                     v-for="category in categories"
                                     :value="category.id"
@@ -55,7 +73,11 @@
                             </select>
                         </div>
 
-                        <button type="submit" class="btn btn-primary" @click.prevent="create">
+                        <button
+                            type="submit"
+                            :disabled="!valid"
+                            class="btn btn-primary"
+                        >
                             Submit
                         </button>
                     </form>
@@ -67,6 +89,7 @@
 
 <script>
 import { mapGetters } from 'vuex'
+import Form from 'vform'
 
 export default {
     data: () => ({
@@ -78,7 +101,8 @@ export default {
         },
         brands: [],
         categories: [],
-        showImage: false
+        showImage: false,
+        valid: true
     }),
     methods: {
         create(
@@ -91,6 +115,9 @@ export default {
             // console.log('create:', name, image, brand, category)
 
             if(this.validateForm()) {
+                // disable submit
+                this.valid = false
+
                 // axios
                 axios.post('api/products/create', {
                     name,
@@ -110,6 +137,8 @@ export default {
                     })
                     .catch(err => {
                         console.log(err)
+
+                        this.valid = true
                     })
             } else {
                 this.$swal({
@@ -124,6 +153,7 @@ export default {
             this.form.brand = ''
             this.form.category = ''
             this.showImage = false
+            this.valid = true
         },
         validateForm() {
             if(

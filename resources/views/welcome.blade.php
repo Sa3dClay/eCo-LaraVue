@@ -14,6 +14,9 @@
 
         {{-- Icon --}}
         <link rel="shortcut icon" href="{{ 'img/logo/eco.png' }}">
+
+        {{-- Bootstrap Icons --}}
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
     
         <!-- Fonts -->
         <link rel="dns-prefetch" href="//fonts.gstatic.com">

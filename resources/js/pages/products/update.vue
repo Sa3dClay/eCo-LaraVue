@@ -3,9 +3,9 @@
         <div class="col-11 col-md-8 col-lg-5">
             <div class="card">
                 <div class="card-body">
-                    <h2 class="card-title text-center">Add New Product</h2>
-
-                    <form @submit.prevent="create">
+                    <h2 class="card-title text-center">Edit Product {{ product.SKU }}</h2>
+                    
+                    <form @submit.prevent="update">
                         <div class="mb-3">
                             <label for="name" class="form-label">
                                 Product Name
@@ -32,7 +32,13 @@
                                 id="image"
                             >
 
-                            <img :src="form.image" v-if="showImage" width="100" height="100" class="my-2">
+                            <img :src="form.image? form.image : product.image" width="100" height="100" class="my-2">
+
+                            <button
+                                class="btn btn-warning d-block"
+                                @click.prevent="reset_image"
+                                v-if="form.image"
+                            >Reset Image</button>
                         </div>
 
                         <div class="mb-3">
@@ -92,34 +98,34 @@ import { mapGetters } from 'vuex'
 
 export default {
     data: () => ({
+        id: '',
+        product: {},
         form: {
             name: '',
             image: '',
-            brand: 1,
-            category: 1
+            brand: '',
+            category: ''
         },
         brands: [],
         categories: [],
-        showImage: false,
         valid: true
     }),
     methods: {
-        // submit create
-        create(
-            event,
+        // submit
+        update(
+            e,
             name = this.form.name,
             image = this.form.image,
             brand = this.form.brand,
             category = this.form.category
         ) {
-            // console.log('create:', name, image, brand, category)
+            // console.log(name, brand, category, image)
 
             if(this.validateForm()) {
-                // disable submit
-                this.valid = false
+                // this.valid = false
 
                 // axios
-                axios.post('api/products/create', {
+                axios.post('api/products/edit/'+this.id, {
                     name,
                     image,
                     brand,
@@ -130,10 +136,10 @@ export default {
 
                         this.$swal({
                             icon: 'success',
-                            title: 'Product Added Successfully!'
+                            title: 'Product Updated Successfully!'
                         })
 
-                        this.resetForm()
+                        this.get_product()
                     })
                     .catch(err => {
                         console.log(err)
@@ -143,22 +149,27 @@ export default {
             } else {
                 this.$swal({
                     icon: 'info',
-                    title: 'Data Missing'
+                    title: 'Data Missing or No Changes'
                 })
             }
         },
+        // reset
         resetForm() {
-            this.form.name = ''
-            this.form.image = ''
-            this.showImage = false
+            this.form.name = this.product.name
+            this.form.brand = this.product.brand
+            this.form.category = this.product.category
             this.valid = true
         },
+        // validate
         validateForm() {
             if(
-                this.form.name &&
-                this.form.image &&
-                this.form.brand &&
-                this.form.category
+                this.form.name      &&
+                this.form.image     &&
+                this.form.brand     &&
+                this.form.category  ||
+                this.form.name      !=  this.product.name   ||
+                this.form.brand     !=  this.product.brand  ||
+                this.form.category  !=  this.product.category
             ) {
                 return true
             } else {
@@ -176,7 +187,6 @@ export default {
                 if(file['size'] < 1000000)
                 {
                     reader.onloadend = () => {
-                        this.showImage = true
                         this.form.image = reader.result
                     }
                     reader.readAsDataURL(file)
@@ -197,6 +207,25 @@ export default {
         is_image(file) {
             let accepts = ['image/png', 'image/jpg', 'image/jpeg']
             return file && accepts.includes(file['type'])
+        },
+        // reset image
+        reset_image() {
+            this.form.image = ''
+        },
+        // get product data
+        get_product() {
+            axios.get('/api/products/'+this.id)
+                .then(res => {
+                    // console.log('product:', res.data)
+
+                    this.product = res.data.product
+
+                    // fill form data
+                    this.resetForm()
+                })
+                .catch(err => {
+                    console.log(err)
+                })
         }
     },
     computed: {
@@ -208,6 +237,11 @@ export default {
         if(!this.user.role == '0') {
             this.$router.push('/store')
         } else {
+            this.id = this.$route.params.id
+
+            // get product by id
+            this.get_product()
+
             // get brands
             axios.get('/api/brands')
                 .then(res => {

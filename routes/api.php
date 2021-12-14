@@ -25,7 +25,9 @@ Route::middleware(['isAdmin'])->group(function () {
 
     // Products
     Route::prefix('products')->group(function () {
+        Route::get('/{id}', 'AdminController@getProduct');
         Route::post('/create', 'AdminController@addProduct');
+        Route::post('/edit/{id}', 'AdminController@updateProduct');
     });
 });
 

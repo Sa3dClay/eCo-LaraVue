@@ -10,40 +10,31 @@ use Illuminate\Support\Facades\DB;
 
 class ProductController extends Controller
 {
+    public function getProduct($id)
+    {
+        $product = Product::find($id);
+
+        $mode = 'id';
+        $product = $this->getProductDetails($product, $mode);
+
+        return $product;
+    }
+
     public function getProducts()
     {
         $products = Product::all();
         
-        $merged_products = $this->getDetails($products);
+        $merged_products = $this->mergeProductsDetails($products);
 
         return $merged_products;
     }
 
-    public function getDetails($products)
+    public function mergeProductsDetails($products)
     {
         $merged_products = array();
 
         foreach($products as $product) {
-            $brand_category = DB::table('product_brand_category')
-                ->where('product_id', $product->id)
-                ->select('brand_id', 'category_id')
-                ->get();
-            
-            $brand_id = $brand_category[0]->brand_id;
-            $category_id = $brand_category[0]->category_id;
-
-            $brand_name = (DB::table('brands')
-                ->where('id', $brand_id)
-                ->select('name')
-                ->get())[0]->name;
-            
-            $category_name = (DB::table('categories')
-                ->where('id', $category_id)
-                ->select('name')
-                ->get())[0]->name;
-
-            $product->brand = $brand_name;
-            $product->category = $category_name;
+            $product = $this->getProductDetails($product);
 
             array_push($merged_products, $product);
         }
@@ -51,7 +42,55 @@ class ProductController extends Controller
         return $merged_products;
     }
 
-    public function addProduct($req)
+    public function getProductDetails($product, $mode='name')
+    {
+        $brand_category = DB::table('product_brand_category')
+            ->where('product_id', $product->id)
+            ->select('brand_id', 'category_id')
+            ->get();
+        
+        $brand_id = $brand_category[0]->brand_id;
+        $category_id = $brand_category[0]->category_id;
+
+        // id mode
+        if($mode == 'id') {
+            $product->brand = $brand_id;
+            $product->category = $category_id;
+
+            return $product;
+        }
+
+        $brand_name = (DB::table('brands')
+            ->where('id', $brand_id)
+            ->select('name')
+            ->get())[0]->name;
+        
+        $category_name = (DB::table('categories')
+            ->where('id', $category_id)
+            ->select('name')
+            ->get())[0]->name;
+
+        $product->brand = $brand_name;
+        $product->category = $category_name;
+
+        return $product;
+    }
+
+    public function uploadImage($image)
+    {
+        // set image name
+        // $image_name = time().'.' . explode('/', explode(':', substr($image, 0, strpos($image, ';')))[1])[1];
+
+        // upload image to public folder
+        // \Image::make($image)->save(public_path('img/products/') . $image_name);
+
+        // upload image to cloudinary and get image url
+        $image_url = cloudinary()->upload($image)->getSecurePath();
+
+        return $image_url;
+    }
+
+    public function getProductNextId()
     {
         // get last product id
         $last_product = Product::select('id')
@@ -65,25 +104,33 @@ class ProductController extends Controller
             $current_id = 1;
         }
 
-        // get product name
-        $product_name = $req->name;
-        
-        // generate sku code
+        return $current_id;
+    }
+
+    public function generateSKU($product_name, $id=0)
+    {
+        // get product id by last one
+        if($id == 0) {
+            $current_id = $this->getProductNextId();
+        } else {
+            $current_id = $id;
+        }
+
+        // generate sku code by name and id
         $sku = Str::upper( Str::limit($product_name, 3, '') . $current_id . "-" . Str::random(5) );
 
-        // get product image
-        $product_image = $req->image;
-        
-        // set image name
-        // $image_name = time().'.' . explode('/', explode(':', substr($product_image, 0, strpos($product_image, ';')))[1])[1];
+        return $sku;
+    }
 
-        // upload image to folder
-        // \Image::make($product_image)->save(public_path('img/products/') . $image_name);
+    public function addProduct($req)
+    {
+        // generate sku
+        $sku = $this->generateSKU($req->name);
 
-        // upload image to cloudinary and get image url
-        $image_url = cloudinary()->upload($product_image)->getSecurePath();
+        // upload image
+        $image_url = $this->uploadImage($req->image);
 
-        // update image with the new name
+        // update image
         $req->merge(['image' => $image_url]);
 
         // save the new product
@@ -99,5 +146,42 @@ class ProductController extends Controller
             'product_id'    => $product->id,
             'brand_id'      => $req->brand,
         ]);
+    }
+
+    public function updateProduct($id, $req)
+    {
+        $product = Product::find($id);
+
+        // check name
+        if($req->name != $product->name) {
+            // generate new sku
+            $sku = $this->generateSKU($req->name, $id);
+
+            // update name
+            $product->name = $req->name;
+
+            // update sku
+            $product->SKU = $sku;
+        }
+
+        // check image
+        if($req->image) {
+            // upload image
+            $image_url = $this->uploadImage($req->image);
+
+            // update image
+            $product->image = $image_url;
+        }
+
+        // save updates
+        $product->save();
+
+        // update brand and category
+        DB::table('product_brand_category')
+            ->where('product_id', $id)
+            ->update([
+                'category_id'   => $req->category,
+                'brand_id'      => $req->brand
+            ]);
     }
 }

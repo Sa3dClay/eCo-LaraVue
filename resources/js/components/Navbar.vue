@@ -66,24 +66,11 @@ export default {
     }),
     methods: {
         logout() {
-            // this.$session.destroy()
-            // localStorage.clear()
+            this.$session.destroy()
+            localStorage.clear()
 
-            // this.$store.commit('logout')
-            // this.$router.push('/login')
-
-            axios.post('api/auth/logout')
-                .then(res => {
-                    // console.log(res)
-
-                    localStorage.clear()
-
-                    this.$store.commit('logout')
-                    this.$router.push('/login')
-                })
-                .catch(err => {
-                    console.log(err)
-                })
+            this.$store.commit('logout')
+            this.$router.push('/login')
         }
     },
     computed: {

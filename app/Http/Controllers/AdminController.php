@@ -34,6 +34,7 @@ class AdminController extends Controller
     }
 
     // Products
+
     public function getProduct($id)
     {
         $product = (new ProductController)->getProduct($id);
@@ -51,5 +52,10 @@ class AdminController extends Controller
     public function updateProduct($id, UpdateProductRequest $req)
     {
         (new ProductController)->updateProduct($id, $req);
+    }
+
+    public function deleteProduct($id)
+    {
+        (new ProductController)->deleteProduct($id);
     }
 }

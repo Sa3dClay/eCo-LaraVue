@@ -184,4 +184,15 @@ class ProductController extends Controller
                 'brand_id'      => $req->brand
             ]);
     }
+
+    public function deleteProduct($id)
+    {
+        $product = Product::find($id);
+
+        DB::table('product_brand_category')
+            ->where('product_id', $id)
+            ->delete();
+
+        $product->delete();
+    }
 }

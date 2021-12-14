@@ -5,11 +5,20 @@
                 <div class="card-body text-center">
                     <h2 class="card-title py-4">{{ 'Hello ' + user.name }}</h2>
 
-                    <div v-if="user.role == 0">
-                        <router-link
-                            class="btn btn-primary"
-                            to="/products/create"
-                        >Add New Product</router-link>
+                    <div class="pb-4">
+                        <div v-if="user.role == 0">
+                            <router-link
+                                class="btn btn-primary"
+                                to="/products/create"
+                            >Add New Product</router-link>
+                        </div>
+
+                        <div v-else>
+                            <router-link
+                                class="btn btn-primary"
+                                to="/store"
+                            >Go Shopping</router-link>
+                        </div>
                     </div>
                 </div>
             </div>

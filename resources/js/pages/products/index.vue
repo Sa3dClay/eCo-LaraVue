@@ -119,10 +119,23 @@ export default {
             // get products
             axios.get('/api/products')
                 .then(res => {
+                    // console.log(res.data)
+
                     this.products = res.data.products
                 })
                 .catch(err => {
-                    console.log(err)
+                    console.log(err.response)
+
+                    // check if token expired
+                    if(err.response.status) {
+                        // destroy session
+                        this.$session.destroy()
+                        localStorage.clear()
+                        
+                        // logout the user
+                        this.$store.commit('logout')
+                        this.$router.push('/login')
+                    }
                 })
         }
     }

@@ -49,12 +49,7 @@
 </template>
 
 <script>
-import Login from './Login.vue'
-
 export default {
-    components: {
-        Login
-    },
     data: () => ({
         registerForm: {
             name: '',
@@ -105,12 +100,17 @@ export default {
                         this.$router.push('/')
                     })
                     .catch(err => {
-                        console.log(err)
+                        console.log(err.response)
+                        let errorMessage = err.response.statusText
+
+                        if(err.response.data.errors.email) {
+                            errorMessage = err.response.data.errors.email[0]
+                        }
 
                         this.$swal({
                             icon: 'error',
                             title: 'Oops...',
-                            text: err,
+                            text: errorMessage,
                         })
                     })
             } else {

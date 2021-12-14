@@ -79,12 +79,13 @@
                             this.$router.push('/')
                         })
                         .catch(err => {
-                            console.log(err)
+                            console.log(err.response)
+                            let errorMessage = err.response.data.error
 
                             this.$swal({
                                 icon: 'error',
                                 title: 'Oops...',
-                                text: err,
+                                text: errorMessage,
                             })
                         })
                 } else {

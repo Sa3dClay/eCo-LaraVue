@@ -28,6 +28,7 @@ Route::middleware(['isAdmin'])->group(function () {
         Route::get('/{id}', 'AdminController@getProduct');
         Route::post('/create', 'AdminController@addProduct');
         Route::post('/edit/{id}', 'AdminController@updateProduct');
+        Route::delete('/delete/{id}', 'AdminController@deleteProduct');
     });
 });
 
@@ -35,5 +36,4 @@ Route::middleware(['isAdmin'])->group(function () {
 Route::middleware(['auth:api'])->group(function () {
     // Products
     Route::get('/products', 'CustomerController@getProducts');
-    
 });

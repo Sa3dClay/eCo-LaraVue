@@ -5349,22 +5349,10 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
   },
   methods: {
     logout: function logout() {
-      var _this = this;
-
-      // this.$session.destroy()
-      // localStorage.clear()
-      // this.$store.commit('logout')
-      // this.$router.push('/login')
-      axios.post('api/auth/logout').then(function (res) {
-        // console.log(res)
-        localStorage.clear();
-
-        _this.$store.commit('logout');
-
-        _this.$router.push('/login');
-      })["catch"](function (err) {
-        console.log(err);
-      });
+      this.$session.destroy();
+      localStorage.clear();
+      this.$store.commit('logout');
+      this.$router.push('/login');
     }
   },
   computed: _objectSpread({}, (0,vuex__WEBPACK_IMPORTED_MODULE_0__.mapGetters)({
@@ -5393,6 +5381,15 @@ function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { va
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
+//
+//
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -5513,12 +5510,13 @@ __webpack_require__.r(__webpack_exports__);
 
           _this.$router.push('/');
         })["catch"](function (err) {
-          console.log(err);
+          console.log(err.response);
+          var errorMessage = err.response.data.error;
 
           _this.$swal({
             icon: 'error',
             title: 'Oops...',
-            text: err
+            text: errorMessage
           });
         });
       } else {
@@ -5555,7 +5553,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var _Login_vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Login.vue */ "./resources/js/pages/Login.vue");
 //
 //
 //
@@ -5606,11 +5603,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
-  components: {
-    Login: _Login_vue__WEBPACK_IMPORTED_MODULE_0__["default"]
-  },
   data: function data() {
     return {
       registerForm: {
@@ -5661,12 +5654,17 @@ __webpack_require__.r(__webpack_exports__);
 
           _this.$router.push('/');
         })["catch"](function (err) {
-          console.log(err);
+          console.log(err.response);
+          var errorMessage = err.response.statusText;
+
+          if (err.response.data.errors.email) {
+            errorMessage = err.response.data.errors.email[0];
+          }
 
           _this.$swal({
             icon: 'error',
             title: 'Oops...',
-            text: err
+            text: errorMessage
           });
         });
       } else {
@@ -6070,9 +6068,21 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     } else {
       // get products
       axios.get('/api/products').then(function (res) {
+        // console.log(res.data)
         _this.products = res.data.products;
       })["catch"](function (err) {
-        console.log(err);
+        console.log(err.response); // check if token expired
+
+        if (err.response.status) {
+          // destroy session
+          _this.$session.destroy();
+
+          localStorage.clear(); // logout the user
+
+          _this.$store.commit('logout');
+
+          _this.$router.push('/login');
+        }
       });
     }
   }
@@ -6193,6 +6203,11 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
+//
+//
+//
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   data: function data() {
@@ -6211,9 +6226,38 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     };
   },
   methods: {
-    // submit
-    update: function update(e) {
+    // delete
+    deleteProduct: function deleteProduct() {
       var _this = this;
+
+      this.$swal({
+        title: 'Are you sure?',
+        text: "You won't be able to revert this!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, delete it!'
+      }).then(function (result) {
+        if (result.isConfirmed) {
+          // delete product
+          axios["delete"]('/api/products/delete/' + _this.id).then(function (res) {
+            console.log(res);
+
+            _this.$swal('Deleted!', 'Product has been deleted.', 'success');
+
+            _this.$router.push('/store');
+          })["catch"](function (err) {
+            console.log(err.response);
+
+            _this.$swal('Ooops!', 'Something went wrong.', 'error');
+          });
+        }
+      });
+    },
+    // update
+    update: function update(e) {
+      var _this2 = this;
 
       var name = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : this.form.name;
       var image = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : this.form.image;
@@ -6231,15 +6275,15 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
           category: category
         }).then(function (res) {
           // console.log(res)
-          _this.$swal({
+          _this2.$swal({
             icon: 'success',
             title: 'Product Updated Successfully!'
           });
 
-          _this.get_product();
+          _this2.get_product();
         })["catch"](function (err) {
           console.log(err);
-          _this.valid = true;
+          _this2.valid = true;
         });
       } else {
         this.$swal({
@@ -6265,7 +6309,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     },
     // upload image on change
     upload_image: function upload_image(e) {
-      var _this2 = this;
+      var _this3 = this;
 
       var file = e.target.files[0];
       var reader = new FileReader(); // check for image type
@@ -6274,7 +6318,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         // check for image size
         if (file['size'] < 1000000) {
           reader.onloadend = function () {
-            _this2.form.image = reader.result;
+            _this3.form.image = reader.result;
           };
 
           reader.readAsDataURL(file);
@@ -6302,15 +6346,15 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     },
     // get product data
     get_product: function get_product() {
-      var _this3 = this;
+      var _this4 = this;
 
       axios.get('/api/products/' + this.id).then(function (res) {
         // console.log('product:', res.data)
-        _this3.product = res.data.product; // fill form data
+        _this4.product = res.data.product; // fill form data
 
-        _this3.resetForm();
+        _this4.resetForm();
       })["catch"](function (err) {
-        console.log(err);
+        console.log(err.response);
       });
     }
   },
@@ -6318,7 +6362,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     user: 'getUser'
   })),
   created: function created() {
-    var _this4 = this;
+    var _this5 = this;
 
     if (!this.user.role == '0') {
       this.$router.push('/store');
@@ -6329,14 +6373,14 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
       axios.get('/api/brands').then(function (res) {
         // console.log('brands:', res.data)
-        _this4.brands = res.data.brands;
+        _this5.brands = res.data.brands;
       })["catch"](function (err) {
         console.log(err);
       }); // get categories
 
       axios.get('/api/categories').then(function (res) {
         // console.log('categories:', res.data)
-        _this4.categories = res.data.categories;
+        _this5.categories = res.data.categories;
       })["catch"](function (err) {
         console.log(err);
       });
@@ -30372,22 +30416,37 @@ var render = function () {
                 _vm._v(_vm._s("Hello " + _vm.user.name)),
               ]),
               _vm._v(" "),
-              _vm.user.role == 0
-                ? _c(
-                    "div",
-                    [
-                      _c(
-                        "router-link",
-                        {
-                          staticClass: "btn btn-primary",
-                          attrs: { to: "/products/create" },
-                        },
-                        [_vm._v("Add New Product")]
-                      ),
-                    ],
-                    1
-                  )
-                : _vm._e(),
+              _c("div", { staticClass: "pb-4" }, [
+                _vm.user.role == 0
+                  ? _c(
+                      "div",
+                      [
+                        _c(
+                          "router-link",
+                          {
+                            staticClass: "btn btn-primary",
+                            attrs: { to: "/products/create" },
+                          },
+                          [_vm._v("Add New Product")]
+                        ),
+                      ],
+                      1
+                    )
+                  : _c(
+                      "div",
+                      [
+                        _c(
+                          "router-link",
+                          {
+                            staticClass: "btn btn-primary",
+                            attrs: { to: "/store" },
+                          },
+                          [_vm._v("Go Shopping")]
+                        ),
+                      ],
+                      1
+                    ),
+              ]),
             ]),
           ])
         : _vm._e(),
@@ -31144,7 +31203,21 @@ var render = function () {
     _c("div", { staticClass: "col-11 col-md-8 col-lg-5" }, [
       _c("div", { staticClass: "card" }, [
         _c("div", { staticClass: "card-body" }, [
-          _c("h2", { staticClass: "card-title text-center" }, [
+          _c(
+            "button",
+            {
+              staticClass: "btn btn-danger d-block mx-auto my-2",
+              on: {
+                click: function ($event) {
+                  $event.preventDefault()
+                  return _vm.deleteProduct.apply(null, arguments)
+                },
+              },
+            },
+            [_vm._v("Delete Product")]
+          ),
+          _vm._v(" "),
+          _c("h2", { staticClass: "card-title text-center my-4" }, [
             _vm._v("Edit Product " + _vm._s(_vm.product.SKU)),
           ]),
           _vm._v(" "),
@@ -31359,7 +31432,7 @@ var render = function () {
                 },
                 [
                   _vm._v(
-                    "\n                        Submit\n                    "
+                    "\n                        Update\n                    "
                   ),
                 ]
               ),

@@ -3,7 +3,12 @@
         <div class="col-11 col-md-8 col-lg-5">
             <div class="card">
                 <div class="card-body">
-                    <h2 class="card-title text-center">Edit Product {{ product.SKU }}</h2>
+                    <button
+                        class="btn btn-danger d-block mx-auto my-2"
+                        @click.prevent="deleteProduct"
+                    >Delete Product</button>
+
+                    <h2 class="card-title text-center my-4">Edit Product {{ product.SKU }}</h2>
                     
                     <form @submit.prevent="update">
                         <div class="mb-3">
@@ -84,7 +89,7 @@
                             :disabled="!valid"
                             class="btn btn-primary"
                         >
-                            Submit
+                            Update
                         </button>
                     </form>
                 </div>
@@ -111,7 +116,45 @@ export default {
         valid: true
     }),
     methods: {
-        // submit
+        // delete
+        deleteProduct() {
+            this.$swal({
+                title: 'Are you sure?',
+                text: "You won't be able to revert this!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, delete it!'
+            })
+                .then((result) => {
+                    if (result.isConfirmed) {
+                        // delete product
+                        axios.delete('/api/products/delete/'+this.id)
+                            .then(res => {
+                                console.log(res)
+
+                                this.$swal(
+                                    'Deleted!',
+                                    'Product has been deleted.',
+                                    'success'
+                                )
+
+                                this.$router.push('/store')
+                            })
+                            .catch(err => {
+                                console.log(err.response)
+
+                                this.$swal(
+                                    'Ooops!',
+                                    'Something went wrong.',
+                                    'error'
+                                )
+                            })
+                    }
+                })
+        },
+        // update
         update(
             e,
             name = this.form.name,
@@ -224,7 +267,7 @@ export default {
                     this.resetForm()
                 })
                 .catch(err => {
-                    console.log(err)
+                    console.log(err.response)
                 })
         }
     },

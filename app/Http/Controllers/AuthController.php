@@ -35,7 +35,7 @@ class AuthController extends Controller
         event(new Registered($user));
 
         return response()->json([
-            'data' => $user,
+            'user' => $user,
             'token' => $token,
         ], 201);
     }
@@ -48,7 +48,7 @@ class AuthController extends Controller
         }
 
         return response()->json([
-            'data' => auth()->user(),
+            'user' => auth()->user(),
             'token' => $token,
         ], 200);
     }

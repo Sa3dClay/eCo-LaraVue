@@ -10,11 +10,10 @@ use Illuminate\Support\Facades\DB;
 
 class ProductController extends Controller
 {
-    public function getProduct($id)
+    public function getProduct($id, $mode='id')
     {
         $product = Product::find($id);
 
-        $mode = 'id';
         $product = $this->getProductDetails($product, $mode);
 
         return $product;

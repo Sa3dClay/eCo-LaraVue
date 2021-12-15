@@ -36,4 +36,11 @@ Route::middleware(['isAdmin'])->group(function () {
 Route::middleware(['auth:api'])->group(function () {
     // Products
     Route::get('/products', 'CustomerController@getProducts');
+
+    // Cart
+    Route::prefix('/cart')->group(function () {
+        Route::get('/', 'CustomerController@getCartProducts');
+        Route::post('/add', 'CustomerController@addCartProduct');
+        Route::delete('/delete/{id}', 'CustomerController@deleteCartProduct');
+    });
 });

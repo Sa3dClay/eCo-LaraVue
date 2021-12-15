@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class CustomerController extends Controller
 {
@@ -11,6 +12,7 @@ class CustomerController extends Controller
         $this->middleware('auth:api');
     }
 
+    // Products
     public function getProducts()
     {
         $products = (new ProductController)->getProducts();
@@ -18,5 +20,36 @@ class CustomerController extends Controller
         return response()->json([
             'products' => $products
         ]);
+    }
+
+    // Cart
+    public function addCartProduct(Request $req)
+    {
+        $user_id = Auth::id();
+        $product_id = $req->id;
+
+        $product = (new CartController)->addCartProduct($user_id, $product_id);
+
+        return response()->json([
+            'product' => $product
+        ]);
+    }
+
+    public function getCartProducts()
+    {
+        $user_id = Auth::id();
+
+        $products = (new CartController)->getCartProducts($user_id);
+
+        return response()->json([
+            'products' => $products
+        ]);
+    }
+
+    public function deleteCartProduct($product_id)
+    {
+        $user_id = Auth::id();
+
+        (new CartController)->deleteCartProduct($user_id, $product_id);
     }
 }

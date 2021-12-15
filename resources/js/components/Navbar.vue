@@ -23,6 +23,18 @@
                         <li class="nav-item">
                             <router-link class="nav-link" to="/store">Store</router-link>
                         </li>
+                        
+                        <li class="nav-item px-2" v-if="user.role == 0">
+                            <router-link class="nav-link" to="/products/create">
+                                <i class="bi bi-bag-plus-fill"></i>
+                            </router-link>
+                        </li>
+                        
+                        <li class="nav-item px-2" v-if="user.role == 1">
+                            <router-link class="nav-link" to="/cart">
+                                <i class="bi bi-cart3"></i>
+                            </router-link>
+                        </li>
 
                         <li class="nav-item px-2">
                             <a type="button" class="nav-link" @click.prevent="logout">
@@ -76,7 +88,8 @@ export default {
     computed: {
         ...mapGetters ({
             loggedIn: 'isLoggedIn',
-            token: 'getToken'
+            token: 'getToken',
+            user: 'getUser'
         })
     }
 }

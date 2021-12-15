@@ -1,12 +1,19 @@
 <template>
     <div class="row justify-content-center my-4">
-        <div class="col-10">
-            <h1 class="text-center">Products</h1>
+        <div class="col-12">
+            <h1 class="text-center">
+                Show 
+                <a class="btn btn-dark py-1 px-2" @click.prevent="resetFilters">All</a> 
+                Products or filter by
+                <a class="btn btn-success py-1 px-2" @click.prevent="applyBrand">Brands</a>
+                /
+                <a class="btn btn-primary py-1 px-2" @click.prevent="applyCategory">Categories</a>
+            </h1>
         </div>
 
         <div
             class="col-10 col-md-4 col-lg-3 my-2"
-            v-for="product in products" :key="product.id"
+            v-for="product in filterProducts" :key="product.id"
         >
             <div class="card">
 
@@ -17,11 +24,25 @@
 
                     <div class="actions">
                         <div v-if="user.role == 0">
-                            <button class="btn btn-success" @click.prevent="update(product.id)">Edit Product</button>
+                            <button
+                                class="btn btn-success"
+                                @click.prevent="update(product.id)"
+                            >Edit Product</button>
                         </div>
 
                         <div v-else>
-                            <button class="btn btn-success">Add To Cart</button>
+                            <button
+                                v-if="notInCart(product.id)"
+                                :disabled="!canClick"
+                                class="btn btn-success"
+                                @click.prevent="addToCart(product.id)"
+                            >Add To Cart</button>
+
+                            <button
+                                v-else
+                                disabled
+                                class="btn btn-success"
+                            >In Cart</button>
                         </div>
                     </div>
                 </div>
@@ -34,11 +55,21 @@
                     <div class="details">
                         <div class="row">
                             <div class="col-6">
-                                <p class="bg-dark">{{ product.brand }}</p>
+                                <a
+                                    class="d-block btn btn-dark py-1 px-2"
+                                    @click.prevent="brandFilter = product.brand"
+                                >
+                                    {{ product.brand }}
+                                </a>
                             </div>
 
                             <div class="col-6">
-                                <p class="bg-primary">{{ product.category }}</p>
+                                <a
+                                    class="d-block btn btn-primary py-1 px-2"
+                                    @click.prevent="categoryFilter = product.category"
+                                >
+                                    {{ product.category }}
+                                </a>
                             </div>
                         </div>
                     </div>
@@ -83,12 +114,19 @@
                 }
             }
         }
-        .details {
-            p {
-                color: #fff;
-                padding: 8px;
-                margin: 0;
-            }
+    }
+</style>
+
+<style lang="scss">
+    .details {
+        p {
+            color: #fff;
+            padding: 4px;
+            margin: 0;
+        }
+        .btn {
+            transition: all 0.3s;
+            border-radius: 0;
         }
     }
 </style>
@@ -98,19 +136,94 @@ import { mapGetters } from 'vuex'
 
 export default {
     data: () => ({
-        products: []
+        products: [],
+        cartProducts: [],
+        canClick: true,
+        brandFilter: '',
+        categoryFilter: '',
+        currentFilterType: ''
     }),
     methods: {
         update(id) {
             // console.log('product:', id)
 
             this.$router.push('/products/edit/'+id)
+        },
+        addToCart(id) {
+            // console.log('product:', id)
+
+            this.canClick = false
+
+            axios.post('/api/cart/add', {id})
+                .then(res => {
+                    // console.log(res)
+
+                    this.canClick = true
+
+                    this.$swal({
+                        position: 'top-end',
+                        icon: 'success',
+                        title: 'Added successfully',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+
+                    this.cartProducts.push(res.data.product)
+                })
+                .catch(err => {
+                    console.log(err.response)
+
+                    this.canClick = true
+
+                    this.$swal({
+                        icon: 'error',
+                        title: 'Something went wrong',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                })
+        },
+        notInCart(id) {
+            // console.log(id)
+
+            var check = true
+
+            this.cartProducts.forEach(product => {
+                // console.log(product.id, id)
+
+                if(product.id == id) {
+                    check = false
+                }
+            })
+
+            return check
+        },
+        resetFilters() {
+            this.brandFilter = ''
+            this.categoryFilter = ''
+        },
+        applyBrand() {
+            this.currentFilterType = 'brand'
+        },
+        applyCategory() {
+            this.currentFilterType = 'category'
         }
     },
     computed: {
         ...mapGetters ({
             user: 'getUser'
-        })
+        }),
+        filterProducts() {
+            if(this.currentFilterType == 'brand') {
+                return this.products.filter(product => {
+                    return product.brand.match(this.brandFilter)
+                })
+            } else {
+                return this.products.filter(product => {
+                    return product.category.match(this.categoryFilter)
+                })
+            }
+        }
     },
     created() {
         if(!this.user) {
@@ -127,7 +240,7 @@ export default {
                     console.log(err.response)
 
                     // check if token expired
-                    if(err.response.status) {
+                    if(err.response.status == 401) {
                         // destroy session
                         this.$session.destroy()
                         localStorage.clear()
@@ -136,6 +249,17 @@ export default {
                         this.$store.commit('logout')
                         this.$router.push('/login')
                     }
+                })
+            
+            // get cart products
+            axios.get('/api/cart')
+                .then(res => {
+                    // console.log(res.data)
+
+                    this.cartProducts = res.data.products
+                })
+                .catch(err => {
+                    console.log(err.response)
                 })
         }
     }

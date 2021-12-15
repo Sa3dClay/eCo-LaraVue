@@ -10,7 +10,7 @@ class CartController extends Controller
 {
     public function addCartProduct($user_id, $product_id)
     {
-        Cart::create([
+        DB::table('carts')->insert([
             'user_id'   =>  $user_id,
             'product_id'=>  $product_id
         ]);

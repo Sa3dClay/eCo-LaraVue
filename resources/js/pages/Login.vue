@@ -5,23 +5,48 @@
                 <div class="card-body">
                     <h2 class="card-title text-center">Login</h2>
 
-                    <form>
+                    <form @submit.prevent="login" @keydown="form.onKeydown($event)">
                         <div class="mb-3">
-                            <label for="email" class="form-label">
-                                Email address
-                            </label>
+                            <label for="email" class="form-label">Email address</label>
 
-                            <input type="email" class="form-control" id="email" v-model="loginForm.email" required>
+                            <input
+                                id="email"
+                                name="email"
+                                type="email"
+                                class="form-control"
+                                v-model="form.email"
+                                required
+                            >
+
+                            <div
+                                v-if="form.errors.has('email')"
+                                v-html="form.errors.get('email')"
+                                class="bg-danger rounded text-white text-center p-2 m-2"
+                            />
                         </div>
 
                         <div class="mb-3">
                             <label for="password" class="form-label">Password</label>
 
-                            <input type="password" class="form-control" id="password" v-model="loginForm.password" required>
+                            <input
+                                id="password"
+                                name="password"
+                                type="password"
+                                class="form-control"
+                                v-model="form.password"
+                                minlength="8"
+                                required
+                            >
+
+                            <div
+                                v-if="form.errors.has('password')"
+                                v-html="form.errors.get('password')"
+                                class="bg-danger rounded text-white text-center p-2 m-2"
+                            />
                         </div>
 
-                        <button type="submit" class="btn btn-primary" @click.prevent="login">
-                            Submit
+                        <button type="submit" class="btn btn-primary" :disabled="form.busy">
+                            Login
                         </button>
                     </form>
                 </div>
@@ -31,84 +56,54 @@
 </template>
 
 <script>
-    export default {
-        data: () => ({
-            loginForm: {
-                email: '',
-                password: ''
-            }
-        }),
-        methods: {
-            login(
-                event,
-                email = this.loginForm.email,
-                password = this.loginForm.password
-            ) {
-                // console.log("Login:", email, password)
+import Form from 'vform'
 
-                if(this.validateForm()) {
-                    // axios
-                    axios.post('api/auth/login', {
-                        email: email,
-                        password: password
+export default {
+    data: () => ({
+        form: new Form({
+            email: '',
+            password: ''
+        })
+    }),
+    methods: {
+        async login() {
+            this.form.post('/api/auth/login')
+                .then(res => {
+                    console.log(res)
+
+                    let user = res.data.user
+                    let token = res.data.token
+
+                    // store
+                    this.$store.commit('login', {
+                        user: user,
+                        token: token
                     })
-                        .then(res => {
-                            // console.log(res)
-                            let user = res.data.data
-                            let token = res.data.token
 
-                            // store
-                            this.$store.commit('login', {
-                                user: user,
-                                token: token
-                            })
+                    // session
+                    this.$session.start()
+                    this.$session.set('user', user)
+                    this.$session.set('token', token)
 
-                            // session
-                            this.$session.start()
-                            this.$session.set('user', user)
-                            this.$session.set('token', token)
+                    // axios auth headers
+                    axios.defaults.headers.common['Authorization'] = 'Bearer ' + token
 
-                            // axios auth headers
-                            axios.defaults.headers.common['Authorization'] = 'Bearer ' + token
-                            // console.log(axios.defaults.headers.common)
+                    // reset form
+                    this.form.reset()
 
-                            // reset form
-                            this.resetForm()
+                    // router
+                    this.$router.push('/')
+                })
+                .catch(err => {
+                    console.log(err.response)
 
-                            // router
-                            this.$router.push('/')
-                        })
-                        .catch(err => {
-                            console.log(err.response)
-                            let errorMessage = err.response.data.error
-
-                            this.$swal({
-                                icon: 'error',
-                                title: 'Oops...',
-                                text: errorMessage,
-                            })
-                        })
-                } else {
                     this.$swal({
-                        icon: 'info',
-                        title: 'Data missing!'
+                        icon: 'error',
+                        title: 'Wrong email or password!',
+                        showConfirmButton: true
                     })
-                }
-            },
-            validateForm() {
-                if(
-                    this.loginForm.email &&
-                    this.loginForm.password
-                ) {
-                    return true;
-                } else {
-                    return false;
-                }
-            },
-            resetForm() {
-                this.loginForm.email = ''
-                this.loginForm.password = ''
-            }
+                })
         }
     }
+}
 </script>

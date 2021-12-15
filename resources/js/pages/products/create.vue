@@ -5,11 +5,9 @@
                 <div class="card-body">
                     <h2 class="card-title text-center">Add New Product</h2>
 
-                    <form @submit.prevent="create">
+                    <form @submit.prevent="create" @keydown="form.onKeydown($event)">
                         <div class="mb-3">
-                            <label for="name" class="form-label">
-                                Product Name
-                            </label>
+                            <label for="name" class="form-label">Product Name</label>
 
                             <input
                                 id="name"
@@ -19,6 +17,12 @@
                                 class="form-control"
                                 required
                             >
+
+                            <div
+                                v-if="form.errors.has('name')"
+                                v-html="form.errors.get('name')"
+                                class="bg-danger rounded text-white text-center p-2 m-2"
+                            />
                         </div>
 
                         <div class="mb-3">
@@ -30,7 +34,14 @@
                                 name="image"
                                 type="file"
                                 id="image"
+                                required
                             >
+
+                            <div
+                                v-if="form.errors.has('image')"
+                                v-html="form.errors.get('image')"
+                                class="bg-danger rounded text-white text-center p-2 m-2"
+                            />
 
                             <img :src="form.image" v-if="showImage" width="100" height="100" class="my-2">
                         </div>
@@ -43,6 +54,7 @@
                                 name="brand"
                                 class="form-select"
                                 v-model="form.brand"
+                                required
                             >
                                 <option
                                     v-for="brand in brands"
@@ -52,6 +64,12 @@
                                     {{ brand.name }}
                                 </option>
                             </select>
+
+                            <div
+                                v-if="form.errors.has('brand')"
+                                v-html="form.errors.get('brand')"
+                                class="bg-danger rounded text-white text-center p-2 m-2"
+                            />
                         </div>
 
                         <div class="mb-3">
@@ -62,6 +80,7 @@
                                 name="category"
                                 class="form-select"
                                 v-model="form.category"
+                                required
                             >
                                 <option
                                     v-for="category in categories"
@@ -71,14 +90,16 @@
                                     {{ category.name }}
                                 </option>
                             </select>
+
+                            <div
+                                v-if="form.errors.has('category')"
+                                v-html="form.errors.get('category')"
+                                class="bg-danger rounded text-white text-center p-2 m-2"
+                            />
                         </div>
 
-                        <button
-                            type="submit"
-                            :disabled="!valid"
-                            class="btn btn-primary"
-                        >
-                            Submit
+                        <button type="submit" class="btn btn-primary" :disabled="form.busy">
+                            Create
                         </button>
                     </form>
                 </div>
@@ -89,81 +110,40 @@
 
 <script>
 import { mapGetters } from 'vuex'
+import Form from 'vform'
 
 export default {
     data: () => ({
-        form: {
+        form: new Form({
             name: '',
             image: '',
             brand: 1,
             category: 1
-        },
+        }),
         brands: [],
         categories: [],
         showImage: false,
-        valid: true
     }),
     methods: {
-        // submit create
-        create(
-            event,
-            name = this.form.name,
-            image = this.form.image,
-            brand = this.form.brand,
-            category = this.form.category
-        ) {
-            // console.log('create:', name, image, brand, category)
+        // create
+        async create() {
+            await this.form.post('api/products/create')
+                .then(res => {
+                    console.log(res)
 
-            if(this.validateForm()) {
-                // disable submit
-                this.valid = false
-
-                // axios
-                axios.post('api/products/create', {
-                    name,
-                    image,
-                    brand,
-                    category
-                })
-                    .then(res => {
-                        // console.log(res)
-
-                        this.$swal({
-                            icon: 'success',
-                            title: 'Product Added Successfully!'
-                        })
-
-                        this.resetForm()
+                    this.$swal({
+                        icon: 'success',
+                        title: 'Product Added Successfully!',
+                        showConfirmButton: false,
+                        timer: 1500
                     })
-                    .catch(err => {
-                        console.log(err)
 
-                        this.valid = true
-                    })
-            } else {
-                this.$swal({
-                    icon: 'info',
-                    title: 'Data Missing'
+                    this.form.reset()
+                    this.showImage = false
                 })
-            }
-        },
-        resetForm() {
-            this.form.name = ''
-            this.form.image = ''
-            this.showImage = false
-            this.valid = true
-        },
-        validateForm() {
-            if(
-                this.form.name &&
-                this.form.image &&
-                this.form.brand &&
-                this.form.category
-            ) {
-                return true
-            } else {
-                return false
-            }
+                .catch(err => {
+                    console.log(err.response)
+                })
         },
         // upload image on change
         upload_image(e) {

@@ -5,41 +5,85 @@
                 <div class="card-body">
                     <h2 class="card-title text-center">Register</h2>
 
-                    <form>
+                    <form @submit.prevent="register" @keydown="form.onKeydown($event)">
                         <div class="mb-3">
-                            <label for="name" class="form-label">
-                                Name
-                            </label>
+                            <label for="name" class="form-label">Name</label>
 
-                            <input type="text" class="form-control" id="name" v-model="registerForm.name" required>
+                            <input
+                                id="name"
+                                name="name"
+                                type="text"
+                                class="form-control"
+                                v-model="form.name"
+                                required
+                            >
+
+                            <div
+                                v-if="form.errors.has('name')"
+                                v-html="form.errors.get('name')"
+                                class="bg-danger rounded text-white text-center p-2 m-2"
+                            />
                         </div>
 
                         <div class="mb-3">
-                            <label for="email" class="form-label">
-                                Email address
-                            </label>
+                            <label for="email" class="form-label">Email address</label>
 
-                            <input type="email" class="form-control" id="email" aria-describedby="emailHelp" v-model="registerForm.email" required>
+                            <input
+                                id="email"
+                                name="email"
+                                type="email"
+                                class="form-control"
+                                aria-describedby="emailHelp"
+                                v-model="form.email"
+                                required
+                            >
                             
                             <div id="emailHelp" class="form-text">
                                 We'll never share your email with anyone else.
                             </div>
+
+                            <div
+                                v-if="form.errors.has('email')"
+                                v-html="form.errors.get('email')"
+                                class="bg-danger rounded text-white text-center p-2 m-2"
+                            />
                         </div>
 
                         <div class="mb-3">
                             <label for="password" class="form-label">Password</label>
 
-                            <input type="password" class="form-control" id="password" v-model="registerForm.password" minlength="8" required>
+                            <input
+                                id="password"
+                                name="password"
+                                type="password"
+                                class="form-control"
+                                v-model="form.password"
+                                minlength="8"
+                                required
+                            >
+
+                            <div
+                                v-if="form.errors.has('password')"
+                                v-html="form.errors.get('password')"
+                                class="bg-danger rounded text-white text-center p-2 m-2"
+                            />
                         </div>
 
                         <div class="mb-3">
                             <label for="passwordConfirm" class="form-label">Confirm Password</label>
 
-                            <input type="password" class="form-control" id="passwordConfirm" v-model="registerForm.passwordConfirm" minlength="8" required>
+                            <input
+                                type="password"
+                                class="form-control"
+                                id="passwordConfirm"
+                                v-model="form.passwordConfirm"
+                                minlength="8"
+                                required
+                            >
                         </div>
 
-                        <button type="submit" class="btn btn-primary" @click.prevent="register">
-                            Submit
+                        <button type="submit" class="btn btn-primary" :disabled="form.busy">
+                            Register
                         </button>
                     </form>
                 </div>
@@ -49,94 +93,61 @@
 </template>
 
 <script>
+import Form from 'vform'
+
 export default {
     data: () => ({
-        registerForm: {
+        form: new Form({
             name: '',
             email: '',
             password: '',
             passwordConfirm: ''
-        }
+        })
     }),
     methods: {
-        register(
-            event,
-            name = this.registerForm.name,
-            email = this.registerForm.email,
-            password = this.registerForm.password
-        ) {
-            // console.log("Register:", name, email, password)
-
-            if(this.validateForm()) {
-                // axios
-                axios.post('api/auth/register', {
-                    name: name,
-                    email: email,
-                    password: password
-                })
-                    .then(res => {
-                        // console.log(res)
-                        let user = res.data.data
-                        let token = res.data.token
-
-                        // store
-                        this.$store.commit('login', {
-                            user: user,
-                            token: token
-                        })
-
-                        // session
-                        this.$session.start()
-                        this.$session.set('user', user)
-                        this.$session.set('token', token)
-
-                        // axios auth headers
-                        axios.defaults.headers.common['Authorization'] = 'Bearer ' + token
-
-                        // reset form
-                        this.resetForm()
-
-                        // router
-                        this.$router.push('/')
-                    })
-                    .catch(err => {
-                        console.log(err.response)
-                        let errorMessage = err.response.statusText
-
-                        if(err.response.data.errors.email) {
-                            errorMessage = err.response.data.errors.email[0]
-                        }
-
-                        this.$swal({
-                            icon: 'error',
-                            title: 'Oops...',
-                            text: errorMessage,
-                        })
-                    })
-            } else {
+        async register() {
+            // check for password confirmation
+            if(this.form.passwordConfirm !== this.form.password) {
                 this.$swal({
                     icon: 'info',
-                    title: 'Data missing!'
+                    title: 'Password must match!'
                 })
+
+                return false
             }
-        },
-        validateForm() {
+
+            let res = await this.form.post('/api/auth/register')
+
+            console.log(res)
+
+            // success
             if(
-                this.registerForm.name &&
-                this.registerForm.email &&
-                this.registerForm.password.length >= 8 &&
-                this.registerForm.passwordConfirm === this.registerForm.password
+                res.status == '201' ||
+                res.status == '200'
             ) {
-                return true;
-            } else {
-                return false;
+                let user = res.data.user
+                let token = res.data.token
+                
+                // store
+                this.$store.commit('login', {
+                    user: user,
+                    token: token
+                })
+
+                // session
+                this.$session.start()
+                this.$session.set('user', user)
+                this.$session.set('token', token)
+
+                // axios auth headers
+                axios.defaults.headers.common['Authorization'] = 'Bearer ' + token
+
+                // reset form
+                this.form.reset()
+
+                // router
+                this.$router.push('/')
             }
-        },
-        resetForm() {
-            this.registerForm.name = ''
-            this.registerForm.email = ''
-            this.registerForm.password = ''
-            this.registerForm.passwordConfirm = ''
         }
     }
 }

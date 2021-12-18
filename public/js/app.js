@@ -6358,15 +6358,18 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       });
       return check;
     },
+    // Filters
     resetFilters: function resetFilters() {
       this.brandFilter = '';
       this.categoryFilter = '';
     },
-    applyBrand: function applyBrand() {
+    applyBrand: function applyBrand(brand) {
       this.currentFilterType = 'brand';
+      this.brandFilter = brand;
     },
-    applyCategory: function applyCategory() {
+    applyCategory: function applyCategory(category) {
       this.currentFilterType = 'category';
+      this.categoryFilter = category;
     }
   },
   computed: _objectSpread(_objectSpread({}, (0,vuex__WEBPACK_IMPORTED_MODULE_0__.mapGetters)({
@@ -32691,29 +32694,19 @@ var render = function () {
           ),
           _vm._v(" \n            Products or filter by\n            "),
           _c(
-            "a",
+            "button",
             {
               staticClass: "btn btn-success py-1 px-2",
-              on: {
-                click: function ($event) {
-                  $event.preventDefault()
-                  return _vm.applyBrand.apply(null, arguments)
-                },
-              },
+              attrs: { disabled: "" },
             },
             [_vm._v("Brands")]
           ),
           _vm._v("\n            /\n            "),
           _c(
-            "a",
+            "button",
             {
               staticClass: "btn btn-primary py-1 px-2",
-              on: {
-                click: function ($event) {
-                  $event.preventDefault()
-                  return _vm.applyCategory.apply(null, arguments)
-                },
-              },
+              attrs: { disabled: "" },
             },
             [_vm._v("Categories")]
           ),
@@ -32798,7 +32791,7 @@ var render = function () {
                           on: {
                             click: function ($event) {
                               $event.preventDefault()
-                              _vm.brandFilter = product.brand
+                              return _vm.applyBrand(product.brand)
                             },
                           },
                         },
@@ -32820,7 +32813,7 @@ var render = function () {
                           on: {
                             click: function ($event) {
                               $event.preventDefault()
-                              _vm.categoryFilter = product.category
+                              return _vm.applyCategory(product.category)
                             },
                           },
                         },

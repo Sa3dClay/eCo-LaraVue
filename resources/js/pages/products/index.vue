@@ -5,9 +5,9 @@
                 Show 
                 <a class="btn btn-dark py-1 px-2" @click.prevent="resetFilters">All</a> 
                 Products or filter by
-                <a class="btn btn-success py-1 px-2" @click.prevent="applyBrand">Brands</a>
+                <button class="btn btn-success py-1 px-2" disabled>Brands</button>
                 /
-                <a class="btn btn-primary py-1 px-2" @click.prevent="applyCategory">Categories</a>
+                <button class="btn btn-primary py-1 px-2" disabled>Categories</button>
             </h1>
         </div>
 
@@ -57,7 +57,7 @@
                             <div class="col-6">
                                 <a
                                     class="d-block btn btn-dark py-1 px-2"
-                                    @click.prevent="brandFilter = product.brand"
+                                    @click.prevent="applyBrand(product.brand)"
                                 >
                                     {{ product.brand }}
                                 </a>
@@ -66,7 +66,7 @@
                             <div class="col-6">
                                 <a
                                     class="d-block btn btn-primary py-1 px-2"
-                                    @click.prevent="categoryFilter = product.category"
+                                    @click.prevent="applyCategory(product.category)"
                                 >
                                     {{ product.category }}
                                 </a>
@@ -198,15 +198,18 @@ export default {
 
             return check
         },
+        // Filters
         resetFilters() {
             this.brandFilter = ''
             this.categoryFilter = ''
         },
-        applyBrand() {
+        applyBrand(brand) {
             this.currentFilterType = 'brand'
+            this.brandFilter = brand
         },
-        applyCategory() {
+        applyCategory(category) {
             this.currentFilterType = 'category'
+            this.categoryFilter = category
         }
     },
     computed: {

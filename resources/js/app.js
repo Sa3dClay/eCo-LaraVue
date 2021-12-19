@@ -36,7 +36,8 @@ const store = new Vuex.Store({
     state: {
         user: null,
         token: null,
-        loggedIn: false
+        loggedIn: false,
+        cartCounter: 0
     },
     getters: {
         getUser(state) {
@@ -47,6 +48,9 @@ const store = new Vuex.Store({
         },
         isLoggedIn(state) {
             return state.loggedIn
+        },
+        getCartCounter(state) {
+            return state.cartCounter
         }
     },
     mutations: {
@@ -59,6 +63,12 @@ const store = new Vuex.Store({
             state.loggedIn = false
             state.user = null
             state.token = null
+        },
+        increaseCartCounter(state) {
+            state.cartCounter += 1
+        },
+        resetCartCounter(state) {
+            state.cartCounter = 0
         }
     }
 })

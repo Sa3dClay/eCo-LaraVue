@@ -160,13 +160,15 @@ export default {
 
                     this.canClick = true
 
-                    this.$swal({
-                        position: 'top-end',
-                        icon: 'success',
-                        title: 'Added successfully',
-                        showConfirmButton: false,
-                        timer: 1500
-                    })
+                    // this.$swal({
+                    //     position: 'top-end',
+                    //     icon: 'success',
+                    //     title: 'Added successfully',
+                    //     showConfirmButton: false,
+                    //     timer: 1500
+                    // })
+
+                    this.$store.commit('increaseCartCounter')
 
                     this.cartProducts.push(res.data.product)
                 })

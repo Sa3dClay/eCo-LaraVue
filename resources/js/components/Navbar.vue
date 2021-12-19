@@ -1,6 +1,6 @@
 <template>
     <div>
-        <nav class="navbar navbar-expand-md navbar-dark bg-dark">
+        <nav class="navbar fixed-top navbar-expand-md navbar-dark bg-dark">
             <div class="container-fluid">
                 <router-link class="navbar-brand" to="/">
                     <img :src="'../img/logo/'+logo" alt="eco" width="40">
@@ -31,8 +31,17 @@
                         </li>
                         
                         <li class="nav-item px-2" v-if="user.role == 1">
-                            <router-link class="nav-link" to="/cart">
+                            <router-link class="nav-link position-relative" to="/cart">
                                 <i class="bi bi-cart3"></i>
+
+                                <span
+                                    class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                                    v-if="cartCounter > 0"
+                                >
+                                    <span>{{ cartCounter }}</span>
+
+                                    <span class="visually-hidden">unread messages</span>
+                                </span>
                             </router-link>
                         </li>
 
@@ -89,7 +98,8 @@ export default {
         ...mapGetters ({
             loggedIn: 'isLoggedIn',
             token: 'getToken',
-            user: 'getUser'
+            user: 'getUser',
+            cartCounter: 'getCartCounter'
         })
     }
 }

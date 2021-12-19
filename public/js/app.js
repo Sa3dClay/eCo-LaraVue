@@ -5363,6 +5363,15 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   data: function data() {
@@ -5381,7 +5390,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
   computed: _objectSpread({}, (0,vuex__WEBPACK_IMPORTED_MODULE_0__.mapGetters)({
     loggedIn: 'isLoggedIn',
     token: 'getToken',
-    user: 'getUser'
+    user: 'getUser',
+    cartCounter: 'getCartCounter'
   }))
 });
 
@@ -5495,6 +5505,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       })["catch"](function (err) {
         console.log(err.response);
       });
+      this.$store.commit('resetCartCounter');
     }
   }
 });
@@ -6324,15 +6335,15 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         id: id
       }).then(function (res) {
         // console.log(res)
-        _this.canClick = true;
+        _this.canClick = true; // this.$swal({
+        //     position: 'top-end',
+        //     icon: 'success',
+        //     title: 'Added successfully',
+        //     showConfirmButton: false,
+        //     timer: 1500
+        // })
 
-        _this.$swal({
-          position: 'top-end',
-          icon: 'success',
-          title: 'Added successfully',
-          showConfirmButton: false,
-          timer: 1500
-        });
+        _this.$store.commit('increaseCartCounter');
 
         _this.cartProducts.push(res.data.product);
       })["catch"](function (err) {
@@ -6785,7 +6796,8 @@ var store = new vuex__WEBPACK_IMPORTED_MODULE_2__["default"].Store({
   state: {
     user: null,
     token: null,
-    loggedIn: false
+    loggedIn: false,
+    cartCounter: 0
   },
   getters: {
     getUser: function getUser(state) {
@@ -6796,6 +6808,9 @@ var store = new vuex__WEBPACK_IMPORTED_MODULE_2__["default"].Store({
     },
     isLoggedIn: function isLoggedIn(state) {
       return state.loggedIn;
+    },
+    getCartCounter: function getCartCounter(state) {
+      return state.cartCounter;
     }
   },
   mutations: {
@@ -6808,6 +6823,12 @@ var store = new vuex__WEBPACK_IMPORTED_MODULE_2__["default"].Store({
       state.loggedIn = false;
       state.user = null;
       state.token = null;
+    },
+    increaseCartCounter: function increaseCartCounter(state) {
+      state.cartCounter += 1;
+    },
+    resetCartCounter: function resetCartCounter(state) {
+      state.cartCounter = 0;
     }
   }
 }); // Routes
@@ -31572,7 +31593,7 @@ var render = function () {
     [
       _c("Navbar"),
       _vm._v(" "),
-      _c("div", { staticClass: "container" }, [_c("router-view")], 1),
+      _c("div", { staticClass: "container pt-5" }, [_c("router-view")], 1),
     ],
     1
   )
@@ -31601,138 +31622,175 @@ var render = function () {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c("div", [
-    _c("nav", { staticClass: "navbar navbar-expand-md navbar-dark bg-dark" }, [
-      _c(
-        "div",
-        { staticClass: "container-fluid" },
-        [
-          _c(
-            "router-link",
-            { staticClass: "navbar-brand", attrs: { to: "/" } },
-            [
-              _c("img", {
-                attrs: {
-                  src: "../img/logo/" + _vm.logo,
-                  alt: "eco",
-                  width: "40",
-                },
-              }),
-            ]
-          ),
-          _vm._v(" "),
-          _vm._m(0),
-          _vm._v(" "),
-          _c(
-            "div",
-            {
-              staticClass: "collapse navbar-collapse",
-              attrs: { id: "navbarSupportedContent" },
-            },
-            [
-              _vm.loggedIn
-                ? _c("ul", { staticClass: "navbar-nav ms-auto" }, [
-                    _c(
-                      "li",
-                      { staticClass: "nav-item" },
-                      [
-                        _c(
-                          "router-link",
-                          { staticClass: "nav-link", attrs: { to: "/store" } },
-                          [_vm._v("Store")]
-                        ),
-                      ],
-                      1
-                    ),
-                    _vm._v(" "),
-                    _vm.user.role == 0
-                      ? _c(
-                          "li",
-                          { staticClass: "nav-item px-2" },
-                          [
-                            _c(
-                              "router-link",
-                              {
-                                staticClass: "nav-link",
-                                attrs: { to: "/products/create" },
-                              },
-                              [_c("i", { staticClass: "bi bi-bag-plus-fill" })]
-                            ),
-                          ],
-                          1
-                        )
-                      : _vm._e(),
-                    _vm._v(" "),
-                    _vm.user.role == 1
-                      ? _c(
-                          "li",
-                          { staticClass: "nav-item px-2" },
-                          [
-                            _c(
-                              "router-link",
-                              {
-                                staticClass: "nav-link",
-                                attrs: { to: "/cart" },
-                              },
-                              [_c("i", { staticClass: "bi bi-cart3" })]
-                            ),
-                          ],
-                          1
-                        )
-                      : _vm._e(),
-                    _vm._v(" "),
-                    _c("li", { staticClass: "nav-item px-2" }, [
+    _c(
+      "nav",
+      { staticClass: "navbar fixed-top navbar-expand-md navbar-dark bg-dark" },
+      [
+        _c(
+          "div",
+          { staticClass: "container-fluid" },
+          [
+            _c(
+              "router-link",
+              { staticClass: "navbar-brand", attrs: { to: "/" } },
+              [
+                _c("img", {
+                  attrs: {
+                    src: "../img/logo/" + _vm.logo,
+                    alt: "eco",
+                    width: "40",
+                  },
+                }),
+              ]
+            ),
+            _vm._v(" "),
+            _vm._m(0),
+            _vm._v(" "),
+            _c(
+              "div",
+              {
+                staticClass: "collapse navbar-collapse",
+                attrs: { id: "navbarSupportedContent" },
+              },
+              [
+                _vm.loggedIn
+                  ? _c("ul", { staticClass: "navbar-nav ms-auto" }, [
                       _c(
-                        "a",
-                        {
-                          staticClass: "nav-link",
-                          attrs: { type: "button" },
-                          on: {
-                            click: function ($event) {
-                              $event.preventDefault()
-                              return _vm.logout.apply(null, arguments)
+                        "li",
+                        { staticClass: "nav-item" },
+                        [
+                          _c(
+                            "router-link",
+                            {
+                              staticClass: "nav-link",
+                              attrs: { to: "/store" },
                             },
-                          },
-                        },
-                        [_c("i", { staticClass: "bi bi-box-arrow-left" })]
+                            [_vm._v("Store")]
+                          ),
+                        ],
+                        1
                       ),
-                    ]),
-                  ])
-                : _c("ul", { staticClass: "navbar-nav ms-auto" }, [
-                    _c(
-                      "li",
-                      { staticClass: "nav-item" },
-                      [
+                      _vm._v(" "),
+                      _vm.user.role == 0
+                        ? _c(
+                            "li",
+                            { staticClass: "nav-item px-2" },
+                            [
+                              _c(
+                                "router-link",
+                                {
+                                  staticClass: "nav-link",
+                                  attrs: { to: "/products/create" },
+                                },
+                                [
+                                  _c("i", {
+                                    staticClass: "bi bi-bag-plus-fill",
+                                  }),
+                                ]
+                              ),
+                            ],
+                            1
+                          )
+                        : _vm._e(),
+                      _vm._v(" "),
+                      _vm.user.role == 1
+                        ? _c(
+                            "li",
+                            { staticClass: "nav-item px-2" },
+                            [
+                              _c(
+                                "router-link",
+                                {
+                                  staticClass: "nav-link position-relative",
+                                  attrs: { to: "/cart" },
+                                },
+                                [
+                                  _c("i", { staticClass: "bi bi-cart3" }),
+                                  _vm._v(" "),
+                                  _vm.cartCounter > 0
+                                    ? _c(
+                                        "span",
+                                        {
+                                          staticClass:
+                                            "position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger",
+                                        },
+                                        [
+                                          _c("span", [
+                                            _vm._v(_vm._s(_vm.cartCounter)),
+                                          ]),
+                                          _vm._v(" "),
+                                          _c(
+                                            "span",
+                                            { staticClass: "visually-hidden" },
+                                            [_vm._v("unread messages")]
+                                          ),
+                                        ]
+                                      )
+                                    : _vm._e(),
+                                ]
+                              ),
+                            ],
+                            1
+                          )
+                        : _vm._e(),
+                      _vm._v(" "),
+                      _c("li", { staticClass: "nav-item px-2" }, [
                         _c(
-                          "router-link",
-                          { staticClass: "nav-link", attrs: { to: "/login" } },
-                          [_vm._v("Login")]
-                        ),
-                      ],
-                      1
-                    ),
-                    _vm._v(" "),
-                    _c(
-                      "li",
-                      { staticClass: "nav-item" },
-                      [
-                        _c(
-                          "router-link",
+                          "a",
                           {
                             staticClass: "nav-link",
-                            attrs: { to: "/register" },
+                            attrs: { type: "button" },
+                            on: {
+                              click: function ($event) {
+                                $event.preventDefault()
+                                return _vm.logout.apply(null, arguments)
+                              },
+                            },
                           },
-                          [_vm._v("Register")]
+                          [_c("i", { staticClass: "bi bi-box-arrow-left" })]
                         ),
-                      ],
-                      1
-                    ),
-                  ]),
-            ]
-          ),
-        ],
-        1
-      ),
-    ]),
+                      ]),
+                    ])
+                  : _c("ul", { staticClass: "navbar-nav ms-auto" }, [
+                      _c(
+                        "li",
+                        { staticClass: "nav-item" },
+                        [
+                          _c(
+                            "router-link",
+                            {
+                              staticClass: "nav-link",
+                              attrs: { to: "/login" },
+                            },
+                            [_vm._v("Login")]
+                          ),
+                        ],
+                        1
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "li",
+                        { staticClass: "nav-item" },
+                        [
+                          _c(
+                            "router-link",
+                            {
+                              staticClass: "nav-link",
+                              attrs: { to: "/register" },
+                            },
+                            [_vm._v("Register")]
+                          ),
+                        ],
+                        1
+                      ),
+                    ]),
+              ]
+            ),
+          ],
+          1
+        ),
+      ]
+    ),
   ])
 }
 var staticRenderFns = [

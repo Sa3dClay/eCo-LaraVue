@@ -8,6 +8,10 @@ Route::prefix('auth')->group(function () {
     Route::post('login', 'AuthController@login');
     Route::post('register', 'AuthController@register');
 
+    // Password Reset
+    Route::post('forgot-password', 'PasswordController@forgotPassword')->middleware('guest');
+    Route::post('reset-password', 'PasswordController@resetPassword')->middleware('guest');
+
     // Authenticated User
     Route::group(['middleware' => 'auth:api'], function() {
         Route::get('user', 'AuthController@user');

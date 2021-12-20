@@ -49,8 +49,73 @@
                             Login
                         </button>
                     </form>
+
+                    <a
+                        class="btn d-block"
+                        data-bs-toggle="modal"
+                        data-bs-target="#forgotPasswordModel"
+                    >
+                        Forget your password?
+                    </a>
                 </div>
             </div>
+
+            <!-- str Modal -->
+            <div
+                class="modal fade"
+                id="forgotPasswordModel"
+                tabindex="-1"
+                aria-hidden="true"
+            >
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button
+                                type="button"
+                                class="btn-close"
+                                aria-label="Close"
+                                data-bs-dismiss="modal"
+                            ></button>
+                        </div>
+                        
+                        <div class="modal-body">
+                            <div class="card my-4">
+                                <div class="card-body">
+                                    <form
+                                        @submit.prevent="forgotPassword"
+                                        @keydown="form.onKeydown($event)"
+                                    >
+                                        <div class="mb-3">
+                                            <label for="emailForgot" class="form-label">Enter your email address</label>
+
+                                            <input
+                                                name="email"
+                                                type="email"
+                                                id="emailForgot"
+                                                class="form-control"
+                                                v-model="form.email"
+                                                required
+                                            >
+
+                                            <div
+                                                v-if="form.errors.has('email')"
+                                                v-html="form.errors.get('email')"
+                                                class="bg-danger rounded text-white text-center p-2 m-2"
+                                            />
+                                        </div>
+
+                                        <button type="submit" class="btn btn-primary" :disabled="form.busy">
+                                            Send Reset Link
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- end Modal -->
+
         </div>
     </div>
 </template>
@@ -66,10 +131,11 @@ export default {
         })
     }),
     methods: {
+        // Login
         async login() {
             this.form.post('/api/auth/login')
                 .then(res => {
-                    console.log(res)
+                    // console.log(res)
 
                     let user = res.data.user
                     let token = res.data.token
@@ -102,6 +168,26 @@ export default {
                         title: 'Wrong email or password!',
                         showConfirmButton: true
                     })
+                })
+        },
+        // Forgot Password
+        async forgotPassword() {
+            await this.form.post('api/auth/forgot-password')
+                .then(res => {
+                    // console.log(res)
+
+                    this.$swal({
+                        icon: 'success',
+                        title: res.data.status,
+                        text: 'you may find email in spam',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+
+                    this.form.reset()
+                })
+                .catch(err => {
+                    console.log(err.response)
                 })
         }
     }

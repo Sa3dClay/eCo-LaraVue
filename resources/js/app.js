@@ -26,10 +26,37 @@ import Home from './pages/Home.vue'
 import Cart from './pages/Cart.vue'
 import Login from './pages/Login.vue'
 import Register from './pages/Register.vue'
-import NotFound from './pages/NotFound.vue'
+import ResetPassword from './pages/password/reset.vue'
 import Products from './pages/products/index.vue'
 import ProductCreate from './pages/products/create.vue'
 import ProductUpdate from './pages/products/update.vue'
+import NotFound from './pages/NotFound.vue'
+
+// Routes
+const routes = [
+    { path: '/', name: 'Home', component: Home },
+    { path: '/cart', name: 'Cart', component: Cart },
+    { path: '/login', name: 'Login', component: Login },
+    { path: '/register', name: 'Register', component: Register },
+    { path: '/password/reset', name: 'ResetPassword', component: ResetPassword },
+    { path: '/store', name: 'Products', component: Products },
+    { path: '/products/create', name: 'ProductCreate', component: ProductCreate },
+    { path: '/products/edit/:id', name: 'ProductUpdate', component: ProductUpdate },
+    { path: '*', name: 'NotFound', component: NotFound }
+]
+const router = new VueRouter({
+    routes
+})
+
+// validate routes
+const authRoutes = ['Login', 'Register', 'ResetPassword']
+
+router.beforeEach((to, from, next) => {
+    if(!authRoutes.includes(to.name) && !localStorage.getItem('vue-session-key')) next ({ name: 'Login' })
+    next()
+    
+    if(authRoutes.includes(to.name) && localStorage.getItem('vue-session-key')) next ({ name: 'Home' })
+})
 
 // Store
 const store = new Vuex.Store({
@@ -71,31 +98,6 @@ const store = new Vuex.Store({
             state.cartCounter = 0
         }
     }
-})
-
-// Routes
-const routes = [
-    { path: '/', name: 'Home', component: Home },
-    { path: '/cart', name: 'Cart', component: Cart },
-    { path: '/login', name: 'Login', component: Login },
-    { path: '/register', name: 'Register', component: Register },
-    { path: '/store', name: 'Products', component: Products },
-    { path: '/products/create', name: 'ProductCreate', component: ProductCreate },
-    { path: '/products/edit/:id', name: 'ProductUpdate', component: ProductUpdate },
-    { path: '*', name: 'NotFound', component: NotFound }
-]
-const router = new VueRouter({
-    routes
-})
-
-// validate routes
-const authRoutes = ['Login', 'Register']
-
-router.beforeEach((to, from, next) => {
-    if(!authRoutes.includes(to.name) && !localStorage.getItem('vue-session-key')) next ({ name: 'Login' })
-    next()
-    
-    if(authRoutes.includes(to.name) && localStorage.getItem('vue-session-key')) next ({ name: 'Home' })
 })
 
 // get axios token from local storage session

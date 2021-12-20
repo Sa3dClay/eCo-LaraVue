@@ -30,7 +30,9 @@ class AuthController extends Controller
             'planet'    =>  $req->planet,
         ]);
 
-        $token = JWTAuth::fromUser($user);
+        // $token = JWTAuth::fromUser($user);
+        
+        $token = auth()->login($user);
 
         event(new Registered($user));
 

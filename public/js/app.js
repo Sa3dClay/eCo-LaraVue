@@ -5372,6 +5372,12 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   data: function data() {
@@ -6435,6 +6441,12 @@ function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { va
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -12248,7 +12260,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, ".navbar-brand img[data-v-6dde423b] {\n  background-color: #fff;\n}\n.nav-link[data-v-6dde423b] {\n  text-align: center;\n}", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, ".navbar-brand img[data-v-6dde423b] {\n  background-color: #fff;\n}\n.nav-link[data-v-6dde423b] {\n  text-align: center;\n}\n.navbar-toggler[data-v-6dde423b] {\n  border: none;\n}\n.navbar-toggler[data-v-6dde423b]:focus {\n  box-shadow: none;\n}", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -31930,7 +31942,7 @@ var render = function () {
     [
       _c("Navbar"),
       _vm._v(" "),
-      _c("div", { staticClass: "container pt-5" }, [_c("router-view")], 1),
+      _c("div", { staticClass: "container" }, [_c("router-view")], 1),
     ],
     1
   )
@@ -31959,175 +31971,161 @@ var render = function () {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c("div", [
-    _c(
-      "nav",
-      { staticClass: "navbar fixed-top navbar-expand-md navbar-dark bg-dark" },
-      [
-        _c(
-          "div",
-          { staticClass: "container-fluid" },
-          [
-            _c(
-              "router-link",
-              { staticClass: "navbar-brand", attrs: { to: "/" } },
-              [
-                _c("img", {
-                  attrs: {
-                    src: "../img/logo/" + _vm.logo,
-                    alt: "eco",
-                    width: "40",
-                  },
-                }),
-              ]
-            ),
-            _vm._v(" "),
-            _vm._m(0),
-            _vm._v(" "),
-            _c(
-              "div",
-              {
-                staticClass: "collapse navbar-collapse",
-                attrs: { id: "navbarSupportedContent" },
-              },
-              [
-                _vm.loggedIn
-                  ? _c("ul", { staticClass: "navbar-nav ms-auto" }, [
-                      _c(
-                        "li",
-                        { staticClass: "nav-item" },
-                        [
-                          _c(
-                            "router-link",
-                            {
-                              staticClass: "nav-link",
-                              attrs: { to: "/store" },
-                            },
-                            [_vm._v("Store")]
-                          ),
-                        ],
-                        1
-                      ),
-                      _vm._v(" "),
-                      _vm.user.role == 0
-                        ? _c(
-                            "li",
-                            { staticClass: "nav-item px-2" },
-                            [
-                              _c(
-                                "router-link",
-                                {
-                                  staticClass: "nav-link",
-                                  attrs: { to: "/products/create" },
-                                },
-                                [
-                                  _c("i", {
-                                    staticClass: "bi bi-bag-plus-fill",
-                                  }),
-                                ]
-                              ),
-                            ],
-                            1
-                          )
-                        : _vm._e(),
-                      _vm._v(" "),
-                      _vm.user.role == 1
-                        ? _c(
-                            "li",
-                            { staticClass: "nav-item px-2" },
-                            [
-                              _c(
-                                "router-link",
-                                {
-                                  staticClass: "nav-link position-relative",
-                                  attrs: { to: "/cart" },
-                                },
-                                [
-                                  _c("i", { staticClass: "bi bi-cart3" }),
-                                  _vm._v(" "),
-                                  _vm.cartCounter > 0
-                                    ? _c(
-                                        "span",
-                                        {
-                                          staticClass:
-                                            "position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger",
-                                        },
-                                        [
-                                          _c("span", [
-                                            _vm._v(_vm._s(_vm.cartCounter)),
-                                          ]),
-                                          _vm._v(" "),
-                                          _c(
-                                            "span",
-                                            { staticClass: "visually-hidden" },
-                                            [_vm._v("unread messages")]
-                                          ),
-                                        ]
-                                      )
-                                    : _vm._e(),
-                                ]
-                              ),
-                            ],
-                            1
-                          )
-                        : _vm._e(),
-                      _vm._v(" "),
-                      _c("li", { staticClass: "nav-item px-2" }, [
+    _c("nav", { staticClass: "navbar navbar-expand-md navbar-dark bg-dark" }, [
+      _c(
+        "div",
+        { staticClass: "container-fluid" },
+        [
+          _c(
+            "router-link",
+            { staticClass: "navbar-brand", attrs: { to: "/" } },
+            [
+              _c("img", {
+                attrs: {
+                  src: "../img/logo/" + _vm.logo,
+                  alt: "eco",
+                  width: "40",
+                },
+              }),
+            ]
+          ),
+          _vm._v(" "),
+          _vm._m(0),
+          _vm._v(" "),
+          _c(
+            "div",
+            {
+              staticClass: "collapse navbar-collapse",
+              attrs: { id: "navbarSupportedContent" },
+            },
+            [
+              _vm.loggedIn
+                ? _c("ul", { staticClass: "navbar-nav ms-auto" }, [
+                    _c(
+                      "li",
+                      { staticClass: "nav-item" },
+                      [
                         _c(
-                          "a",
-                          {
-                            staticClass: "nav-link",
-                            attrs: { type: "button" },
-                            on: {
-                              click: function ($event) {
-                                $event.preventDefault()
-                                return _vm.logout.apply(null, arguments)
+                          "router-link",
+                          { staticClass: "nav-link", attrs: { to: "/store" } },
+                          [_vm._v("Store")]
+                        ),
+                      ],
+                      1
+                    ),
+                    _vm._v(" "),
+                    _vm.user.role == 0
+                      ? _c(
+                          "li",
+                          { staticClass: "nav-item px-2" },
+                          [
+                            _c(
+                              "router-link",
+                              {
+                                staticClass: "nav-link",
+                                attrs: { to: "/products/create" },
                               },
+                              [_c("i", { staticClass: "bi bi-bag-plus-fill" })]
+                            ),
+                          ],
+                          1
+                        )
+                      : _vm._e(),
+                    _vm._v(" "),
+                    _vm.user.role == 1
+                      ? _c(
+                          "li",
+                          { staticClass: "nav-item px-2" },
+                          [
+                            _c(
+                              "router-link",
+                              {
+                                staticClass: "nav-link position-relative",
+                                attrs: { to: "/cart" },
+                              },
+                              [
+                                _c("i", { staticClass: "bi bi-cart3" }),
+                                _vm._v(" "),
+                                _vm.cartCounter > 0
+                                  ? _c(
+                                      "span",
+                                      {
+                                        staticClass:
+                                          "position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger",
+                                      },
+                                      [
+                                        _c("span", [
+                                          _vm._v(_vm._s(_vm.cartCounter)),
+                                        ]),
+                                        _vm._v(" "),
+                                        _c(
+                                          "span",
+                                          { staticClass: "visually-hidden" },
+                                          [_vm._v("unread messages")]
+                                        ),
+                                      ]
+                                    )
+                                  : _vm._e(),
+                              ]
+                            ),
+                          ],
+                          1
+                        )
+                      : _vm._e(),
+                    _vm._v(" "),
+                    _c("li", { staticClass: "nav-item px-2" }, [
+                      _c(
+                        "a",
+                        {
+                          staticClass: "nav-link",
+                          attrs: { type: "button" },
+                          on: {
+                            click: function ($event) {
+                              $event.preventDefault()
+                              return _vm.logout.apply(null, arguments)
                             },
                           },
-                          [_c("i", { staticClass: "bi bi-box-arrow-left" })]
-                        ),
-                      ]),
-                    ])
-                  : _c("ul", { staticClass: "navbar-nav ms-auto" }, [
-                      _c(
-                        "li",
-                        { staticClass: "nav-item" },
-                        [
-                          _c(
-                            "router-link",
-                            {
-                              staticClass: "nav-link",
-                              attrs: { to: "/login" },
-                            },
-                            [_vm._v("Login")]
-                          ),
-                        ],
-                        1
-                      ),
-                      _vm._v(" "),
-                      _c(
-                        "li",
-                        { staticClass: "nav-item" },
-                        [
-                          _c(
-                            "router-link",
-                            {
-                              staticClass: "nav-link",
-                              attrs: { to: "/register" },
-                            },
-                            [_vm._v("Register")]
-                          ),
-                        ],
-                        1
+                        },
+                        [_c("i", { staticClass: "bi bi-box-arrow-left" })]
                       ),
                     ]),
-              ]
-            ),
-          ],
-          1
-        ),
-      ]
-    ),
+                  ])
+                : _c("ul", { staticClass: "navbar-nav ms-auto" }, [
+                    _c(
+                      "li",
+                      { staticClass: "nav-item" },
+                      [
+                        _c(
+                          "router-link",
+                          { staticClass: "nav-link", attrs: { to: "/login" } },
+                          [_vm._v("Login")]
+                        ),
+                      ],
+                      1
+                    ),
+                    _vm._v(" "),
+                    _c(
+                      "li",
+                      { staticClass: "nav-item" },
+                      [
+                        _c(
+                          "router-link",
+                          {
+                            staticClass: "nav-link",
+                            attrs: { to: "/register" },
+                          },
+                          [_vm._v("Register")]
+                        ),
+                      ],
+                      1
+                    ),
+                  ]),
+            ]
+          ),
+        ],
+        1
+      ),
+    ]),
   ])
 }
 var staticRenderFns = [
@@ -33419,40 +33417,50 @@ var render = function () {
     { staticClass: "row justify-content-center my-4" },
     [
       _c("div", { staticClass: "col-12" }, [
-        _c("h1", { staticClass: "text-center" }, [
-          _vm._v("\n            Show \n            "),
-          _c(
-            "a",
-            {
-              staticClass: "btn btn-dark py-1 px-2",
-              on: {
-                click: function ($event) {
-                  $event.preventDefault()
-                  return _vm.resetFilters.apply(null, arguments)
-                },
-              },
-            },
-            [_vm._v("All")]
-          ),
-          _vm._v(" \n            Products or filter by\n            "),
-          _c(
-            "button",
-            {
-              staticClass: "btn btn-success py-1 px-2",
-              attrs: { disabled: "" },
-            },
-            [_vm._v("Brands")]
-          ),
-          _vm._v("\n            /\n            "),
-          _c(
-            "button",
-            {
-              staticClass: "btn btn-primary py-1 px-2",
-              attrs: { disabled: "" },
-            },
-            [_vm._v("Categories")]
-          ),
-        ]),
+        _vm.products.length > 0
+          ? _c("div", [
+              _c("h1", { staticClass: "text-center" }, [
+                _vm._v("\n                Show \n                "),
+                _c(
+                  "a",
+                  {
+                    staticClass: "btn btn-dark py-1 px-2",
+                    on: {
+                      click: function ($event) {
+                        $event.preventDefault()
+                        return _vm.resetFilters.apply(null, arguments)
+                      },
+                    },
+                  },
+                  [_vm._v("All")]
+                ),
+                _vm._v(
+                  " \n                Products or filter by\n                "
+                ),
+                _c(
+                  "button",
+                  {
+                    staticClass: "btn btn-success py-1 px-2",
+                    attrs: { disabled: "" },
+                  },
+                  [_vm._v("Brands")]
+                ),
+                _vm._v("\n                /\n                "),
+                _c(
+                  "button",
+                  {
+                    staticClass: "btn btn-primary py-1 px-2",
+                    attrs: { disabled: "" },
+                  },
+                  [_vm._v("Categories")]
+                ),
+              ]),
+            ])
+          : _c("div", [
+              _c("h1", { staticClass: "text-center" }, [
+                _vm._v("No Products Added Yet!"),
+              ]),
+            ]),
       ]),
       _vm._v(" "),
       _vm._l(_vm.filterProducts, function (product) {

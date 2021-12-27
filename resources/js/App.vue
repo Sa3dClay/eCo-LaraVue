@@ -2,7 +2,7 @@
     <div>
         <Navbar />
         
-        <div class="container pt-5">
+        <div class="container">
             <router-view></router-view>
         </div>
     </div>

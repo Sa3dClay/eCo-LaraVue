@@ -1,14 +1,20 @@
 <template>
     <div class="row justify-content-center my-4">
         <div class="col-12">
-            <h1 class="text-center">
-                Show 
-                <a class="btn btn-dark py-1 px-2" @click.prevent="resetFilters">All</a> 
-                Products or filter by
-                <button class="btn btn-success py-1 px-2" disabled>Brands</button>
-                /
-                <button class="btn btn-primary py-1 px-2" disabled>Categories</button>
-            </h1>
+            <div v-if="products.length > 0">
+                <h1 class="text-center">
+                    Show 
+                    <a class="btn btn-dark py-1 px-2" @click.prevent="resetFilters">All</a> 
+                    Products or filter by
+                    <button class="btn btn-success py-1 px-2" disabled>Brands</button>
+                    /
+                    <button class="btn btn-primary py-1 px-2" disabled>Categories</button>
+                </h1>
+            </div>
+
+            <div v-else>
+                <h1 class="text-center">No Products Added Yet!</h1>
+            </div>
         </div>
 
         <div

@@ -1,6 +1,6 @@
 <template>
     <div>
-        <nav class="navbar fixed-top navbar-expand-md navbar-dark bg-dark">
+        <nav class="navbar navbar-expand-md navbar-dark bg-dark">
             <div class="container-fluid">
                 <router-link class="navbar-brand" to="/">
                     <img :src="'../img/logo/'+logo" alt="eco" width="40">
@@ -75,6 +75,12 @@
     }
     .nav-link {
         text-align: center;
+    }
+    .navbar-toggler {
+        border: none;
+        &:focus {
+            box-shadow: none;
+        }
     }
 </style>
 

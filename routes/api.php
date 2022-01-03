@@ -12,6 +12,11 @@ Route::prefix('auth')->group(function () {
     Route::post('forgot-password', 'PasswordController@forgotPassword')->middleware('guest');
     Route::post('reset-password', 'PasswordController@resetPassword')->middleware('guest');
 
+    // Email Verification
+    Route::get('/email/verify', 'MailVerificationController@emailVerify')->middleware('auth:api')->name('verification.notice');
+    Route::get('/email/verify/{id}/{hash}', 'MailVerificationController@verifyEmail')->middleware(['auth:api'])->name('verification.verify');
+    Route::post('/email/verify/resend', 'MailVerificationController@resendEmailVerify')->middleware(['auth:api'])->name('verification.send');
+
     // Authenticated User
     Route::group(['middleware' => 'auth:api'], function() {
         Route::get('user', 'AuthController@user');

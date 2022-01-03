@@ -146,7 +146,7 @@ export default {
                 this.form.reset()
 
                 // router
-                this.$router.push('/')
+                this.$router.push('/email/verify')
             }
         }
     }

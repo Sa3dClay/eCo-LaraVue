@@ -27,6 +27,8 @@ import Cart from './pages/Cart.vue'
 import Login from './pages/Login.vue'
 import Register from './pages/Register.vue'
 import ResetPassword from './pages/password/reset.vue'
+import VerifyEmail from './pages/EmailVerification/VerifyEmail'
+import EmailVerified from './pages/EmailVerification/EmailVerified'
 import Products from './pages/products/index.vue'
 import ProductCreate from './pages/products/create.vue'
 import ProductUpdate from './pages/products/update.vue'
@@ -35,10 +37,12 @@ import NotFound from './pages/NotFound.vue'
 // Routes
 const routes = [
     { path: '/', name: 'Home', component: Home },
-    { path: '/cart', name: 'Cart', component: Cart },
     { path: '/login', name: 'Login', component: Login },
     { path: '/register', name: 'Register', component: Register },
+    { path: '/email/verify', name: 'VerifyEmail', component: VerifyEmail },
+    { path: '/email/verified', name: 'EmailVerified', component: EmailVerified },
     { path: '/password/reset', name: 'ResetPassword', component: ResetPassword },
+    { path: '/cart', name: 'Cart', component: Cart },
     { path: '/store', name: 'Products', component: Products },
     { path: '/products/create', name: 'ProductCreate', component: ProductCreate },
     { path: '/products/edit/:id', name: 'ProductUpdate', component: ProductUpdate },
@@ -50,12 +54,30 @@ const router = new VueRouter({
 
 // validate routes
 const authRoutes = ['Login', 'Register', 'ResetPassword']
+const verifyRoutes = ['VerifyEmail', 'EmailVerified']
 
+// Route guards
 router.beforeEach((to, from, next) => {
+    // Guest
     if(!authRoutes.includes(to.name) && !localStorage.getItem('vue-session-key')) next ({ name: 'Login' })
     next()
     
+    // Authenticated User
     if(authRoutes.includes(to.name) && localStorage.getItem('vue-session-key')) next ({ name: 'Home' })
+    else next()
+
+    // get session as json
+    if(localStorage.getItem('vue-session-key')) {
+        var session = JSON.parse(localStorage.getItem('vue-session-key'))
+    }
+
+    // Unverified User
+    if(!verifyRoutes.includes(to.name) && localStorage.getItem('vue-session-key') && !session.verfied) next ({ name: 'VerifyEmail' })
+    else next()
+    
+    // Verified User
+    if(verifyRoutes.includes(to.name) && localStorage.getItem('vue-session-key') && session.verfied) next ({ name: 'Home' })
+    else next()
 })
 
 // Store

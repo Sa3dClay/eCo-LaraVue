@@ -6,7 +6,7 @@ use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
-class UserSeeder extends Seeder
+class AdminSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -19,7 +19,8 @@ class UserSeeder extends Seeder
             'role'  => '0',
             'name'  => 'Admin',
             'email' => 'admin@eco.com',
-            'password' => Hash::make('password')
+            'email_verified_at' => '2022-01-01 22:00:00',
+            'password' => Hash::make('P@ssw0rd')
         ]);
     }
 }

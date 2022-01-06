@@ -37,9 +37,9 @@ class CustomerController extends Controller
 
     public function getCartProducts()
     {
-        $user_id = Auth::id();
+        $carts = Auth::user()->carts;
 
-        $products = (new CartController)->getCartProducts($user_id);
+        $products = (new CartController)->getCartProducts($carts);
 
         return response()->json([
             'products' => $products

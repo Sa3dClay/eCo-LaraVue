@@ -143,6 +143,12 @@ export default {
                 })
                 .catch(err => {
                     console.log(err.response)
+
+                    this.$swal({
+                        icon: 'error',
+                        title: 'Sorry, something went wrong!',
+                        showConfirmButton: true,
+                    })
                 })
         },
         // upload image on change

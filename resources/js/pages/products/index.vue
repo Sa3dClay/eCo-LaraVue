@@ -63,18 +63,18 @@
                             <div class="col-6">
                                 <a
                                     class="d-block btn btn-dark py-1 px-2"
-                                    @click.prevent="applyBrand(product.brand)"
+                                    @click.prevent="applyBrand(product.brand_name)"
                                 >
-                                    {{ product.brand }}
+                                    {{ product.brand_name }}
                                 </a>
                             </div>
 
                             <div class="col-6">
                                 <a
                                     class="d-block btn btn-primary py-1 px-2"
-                                    @click.prevent="applyCategory(product.category)"
+                                    @click.prevent="applyCategory(product.category_name)"
                                 >
-                                    {{ product.category }}
+                                    {{ product.category_name }}
                                 </a>
                             </div>
                         </div>
@@ -227,11 +227,11 @@ export default {
         filterProducts() {
             if(this.currentFilterType == 'brand') {
                 return this.products.filter(product => {
-                    return product.brand.match(this.brandFilter)
+                    return product.brand_name.match(this.brandFilter)
                 })
             } else {
                 return this.products.filter(product => {
-                    return product.category.match(this.categoryFilter)
+                    return product.category_name.match(this.categoryFilter)
                 })
             }
         }

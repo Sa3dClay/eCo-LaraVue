@@ -10,11 +10,9 @@
 
                     <h2 class="card-title text-center my-4">Edit Product {{ product.SKU }}</h2>
                     
-                    <form @submit.prevent="update">
+                    <form @submit.prevent="update" @keydown="form.onKeydown($event)">
                         <div class="mb-3">
-                            <label for="name" class="form-label">
-                                Product Name
-                            </label>
+                            <label for="name" class="form-label">Product Name</label>
 
                             <input
                                 id="name"
@@ -24,6 +22,12 @@
                                 class="form-control"
                                 required
                             >
+
+                            <div
+                                v-if="form.errors.has('name')"
+                                v-html="form.errors.get('name')"
+                                class="bg-danger rounded text-white text-center p-2 m-2"
+                            />
                         </div>
 
                         <div class="mb-3">
@@ -37,12 +41,18 @@
                                 id="image"
                             >
 
-                            <img :src="form.image? form.image : product.image" width="100" height="100" class="my-2">
+                            <div
+                                v-if="form.errors.has('image')"
+                                v-html="form.errors.get('image')"
+                                class="bg-danger rounded text-white text-center p-2 m-2"
+                            />
+
+                            <img :src="form.image ? form.image : product.image" width="100" height="100" class="my-2">
 
                             <button
                                 class="btn btn-warning d-block"
                                 @click.prevent="reset_image"
-                                v-if="form.image"
+                                v-if="form.image && form.image != product.image"
                             >Reset Image</button>
                         </div>
 
@@ -63,6 +73,12 @@
                                     {{ brand.name }}
                                 </option>
                             </select>
+
+                            <div
+                                v-if="form.errors.has('brand')"
+                                v-html="form.errors.get('brand')"
+                                class="bg-danger rounded text-white text-center p-2 m-2"
+                            />
                         </div>
 
                         <div class="mb-3">
@@ -82,13 +98,15 @@
                                     {{ category.name }}
                                 </option>
                             </select>
+
+                            <div
+                                v-if="form.errors.has('category')"
+                                v-html="form.errors.get('category')"
+                                class="bg-danger rounded text-white text-center p-2 m-2"
+                            />
                         </div>
 
-                        <button
-                            type="submit"
-                            :disabled="!valid"
-                            class="btn btn-primary"
-                        >
+                        <button type="submit" class="btn btn-primary" :disabled="form.busy">
                             Update
                         </button>
                     </form>
@@ -100,20 +118,20 @@
 
 <script>
 import { mapGetters } from 'vuex'
+import Form from 'vform'
 
 export default {
     data: () => ({
         id: '',
         product: {},
-        form: {
+        form: new Form ({
             name: '',
             image: '',
             brand: '',
             category: ''
-        },
+        }),
         brands: [],
-        categories: [],
-        valid: true
+        categories: []
     }),
     methods: {
         // delete
@@ -129,6 +147,7 @@ export default {
             })
                 .then((result) => {
                     if (result.isConfirmed) {
+                        
                         // delete product
                         axios.delete('/api/products/delete/'+this.id)
                             .then(res => {
@@ -146,7 +165,7 @@ export default {
                                 console.log(err.response)
 
                                 this.$swal(
-                                    'Ooops!',
+                                    'Ops!',
                                     'Something went wrong.',
                                     'error'
                                 )
@@ -155,69 +174,27 @@ export default {
                 })
         },
         // update
-        update(
-            e,
-            name = this.form.name,
-            image = this.form.image,
-            brand = this.form.brand,
-            category = this.form.category
-        ) {
-            // console.log(name, brand, category, image)
+        async update() {
+            await this.form.post('api/products/edit/'+this.id)
+                .then(res => {
+                    // console.log(res)
 
-            if(this.validateForm()) {
-                // this.valid = false
-
-                // axios
-                axios.post('api/products/edit/'+this.id, {
-                    name,
-                    image,
-                    brand,
-                    category
-                })
-                    .then(res => {
-                        // console.log(res)
-
-                        this.$swal({
-                            icon: 'success',
-                            title: 'Product Updated Successfully!'
-                        })
-
-                        this.get_product()
+                    this.$swal({
+                        icon: 'success',
+                        title: 'Product Updated Successfully!'
                     })
-                    .catch(err => {
-                        console.log(err)
 
-                        this.valid = true
-                    })
-            } else {
-                this.$swal({
-                    icon: 'info',
-                    title: 'Data Missing or No Changes'
+                    this.get_product()
                 })
-            }
+                .catch(err => {
+                    console.log(err)
+                })
         },
-        // reset
+        // reset form
         resetForm() {
             this.form.name = this.product.name
-            this.form.brand = this.product.brand
-            this.form.category = this.product.category
-            this.valid = true
-        },
-        // validate
-        validateForm() {
-            if(
-                this.form.name      &&
-                this.form.image     &&
-                this.form.brand     &&
-                this.form.category  ||
-                this.form.name      !=  this.product.name   ||
-                this.form.brand     !=  this.product.brand  ||
-                this.form.category  !=  this.product.category
-            ) {
-                return true
-            } else {
-                return false
-            }
+            this.form.brand = this.product.brand_id
+            this.form.category = this.product.category_id
         },
         // upload image on change
         upload_image(e) {

@@ -25,9 +25,9 @@
                         
                         <div class="col-4 col-md-2 my-2">
                             <div class="details">
-                                <p class="bg-dark my-1">{{ product.brand }}</p>
+                                <p class="bg-dark my-1">{{ product.brand_name }}</p>
 
-                                <p class="bg-primary my-1">{{ product.category }}</p>
+                                <p class="bg-primary my-1">{{ product.category_name }}</p>
                             </div>
                         </div>
 

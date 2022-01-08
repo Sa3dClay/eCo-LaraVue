@@ -18,7 +18,7 @@
         </div>
 
         <div
-            class="col-10 col-md-4 col-lg-3 my-2"
+            class="col-10 col-md-6 col-lg-4 my-2"
             v-for="product in filterProducts" :key="product.id"
         >
             <div class="card">

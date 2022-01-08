@@ -13,6 +13,12 @@
 <script>
 export default {
     created() {
+        if(!this.$route.query.email_verify_url) {
+            this.$router.push('/login')
+
+            return 0
+        }
+
         let email_verify_url = this.$route.query.email_verify_url
         let signature = this.$route.query.signature
 
@@ -27,7 +33,7 @@ export default {
                     })
 
                     let verify_date = res.data.user_verify_date
-                    this.$session.set('verfied', verify_date)
+                    this.$session.set('verified', verify_date)
 
                     this.$router.push('/')
                 })

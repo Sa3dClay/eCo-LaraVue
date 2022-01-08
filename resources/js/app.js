@@ -72,11 +72,11 @@ router.beforeEach((to, from, next) => {
     }
 
     // Unverified User
-    if(!verifyRoutes.includes(to.name) && localStorage.getItem('vue-session-key') && !session.verfied) next ({ name: 'VerifyEmail' })
+    if(!verifyRoutes.includes(to.name) && localStorage.getItem('vue-session-key') && !session.verified) next ({ name: 'VerifyEmail' })
     else next()
     
     // Verified User
-    if(verifyRoutes.includes(to.name) && localStorage.getItem('vue-session-key') && session.verfied) next ({ name: 'Home' })
+    if(verifyRoutes.includes(to.name) && localStorage.getItem('vue-session-key') && session.verified) next ({ name: 'Home' })
     else next()
 })
 

@@ -5545,6 +5545,11 @@ __webpack_require__.r(__webpack_exports__);
   created: function created() {
     var _this = this;
 
+    if (!this.$route.query.email_verify_url) {
+      this.$router.push('/login');
+      return 0;
+    }
+
     var email_verify_url = this.$route.query.email_verify_url;
     var signature = this.$route.query.signature;
     axios.get(email_verify_url + signature).then(function (res) {
@@ -5558,7 +5563,7 @@ __webpack_require__.r(__webpack_exports__);
 
       var verify_date = res.data.user_verify_date;
 
-      _this.$session.set('verfied', verify_date);
+      _this.$session.set('verified', verify_date);
 
       _this.$router.push('/');
     })["catch"](function (err) {
@@ -5855,7 +5860,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
                   _this.$session.set('token', token);
 
-                  _this.$session.set('verfied', user.email_verified_at); // axios auth headers
+                  _this.$session.set('verified', user.email_verified_at); // axios auth headers
 
 
                   axios.defaults.headers.common['Authorization'] = 'Bearer ' + token; // reset form
@@ -7258,11 +7263,11 @@ router.beforeEach(function (to, from, next) {
   } // Unverified User
 
 
-  if (!verifyRoutes.includes(to.name) && localStorage.getItem('vue-session-key') && !session.verfied) next({
+  if (!verifyRoutes.includes(to.name) && localStorage.getItem('vue-session-key') && !session.verified) next({
     name: 'VerifyEmail'
   });else next(); // Verified User
 
-  if (verifyRoutes.includes(to.name) && localStorage.getItem('vue-session-key') && session.verfied) next({
+  if (verifyRoutes.includes(to.name) && localStorage.getItem('vue-session-key') && session.verified) next({
     name: 'Home'
   });else next();
 }); // Store
@@ -33856,7 +33861,7 @@ var render = function () {
       _vm._l(_vm.filterProducts, function (product) {
         return _c(
           "div",
-          { key: product.id, staticClass: "col-10 col-md-4 col-lg-3 my-2" },
+          { key: product.id, staticClass: "col-10 col-md-6 col-lg-4 my-2" },
           [
             _c("div", { staticClass: "card" }, [
               _c("div", { staticClass: "box" }, [

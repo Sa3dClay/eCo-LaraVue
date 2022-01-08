@@ -150,7 +150,7 @@ export default {
                     this.$session.start()
                     this.$session.set('user', user)
                     this.$session.set('token', token)
-                    this.$session.set('verfied', user.email_verified_at)
+                    this.$session.set('verified', user.email_verified_at)
 
                     // axios auth headers
                     axios.defaults.headers.common['Authorization'] = 'Bearer ' + token

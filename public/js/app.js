@@ -33809,7 +33809,7 @@ var render = function () {
   var _c = _vm._self._c || _h
   return _c(
     "div",
-    { staticClass: "row justify-content-center my-4" },
+    { staticClass: "row justify-content-around my-4" },
     [
       _c("div", { staticClass: "col-12" }, [
         _vm.products.length > 0
@@ -33861,7 +33861,7 @@ var render = function () {
       _vm._l(_vm.filterProducts, function (product) {
         return _c(
           "div",
-          { key: product.id, staticClass: "col-10 col-md-6 col-lg-4 my-2" },
+          { key: product.id, staticClass: "col-10 col-md-5 col-lg-3 my-2" },
           [
             _c("div", { staticClass: "card" }, [
               _c("div", { staticClass: "box" }, [

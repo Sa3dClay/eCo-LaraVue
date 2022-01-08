@@ -1,5 +1,5 @@
 <template>
-    <div class="row justify-content-center my-4">
+    <div class="row justify-content-around my-4">
         <div class="col-12">
             <div v-if="products.length > 0">
                 <h1 class="text-center">
@@ -18,7 +18,7 @@
         </div>
 
         <div
-            class="col-10 col-md-6 col-lg-4 my-2"
+            class="col-10 col-md-5 col-lg-3 my-2"
             v-for="product in filterProducts" :key="product.id"
         >
             <div class="card">

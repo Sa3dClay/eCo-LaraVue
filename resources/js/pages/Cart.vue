@@ -1,6 +1,8 @@
 <template>
     <div class="row justify-content-center my-4">
-        <div class="col-12 col-md-10 col-lg-6">
+        <router-link to="/store" class="text-secondary text-center">back to store</router-link>
+
+        <div class="col-12 col-lg-6">
             <div v-if="products.length < 1">
                 <h2 class="text-center">Your Cart Is Empty</h2>
             </div>

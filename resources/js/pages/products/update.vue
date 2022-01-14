@@ -57,7 +57,7 @@
                         </div>
 
                         <div class="mb-3">
-                            <label for="brand" class="form-label">Brand Name</label>
+                            <label for="brand" class="form-label">Brand</label>
 
                             <select
                                 id="brand"
@@ -82,7 +82,7 @@
                         </div>
 
                         <div class="mb-3">
-                            <label for="category" class="form-label">Brand Name</label>
+                            <label for="category" class="form-label">Category</label>
 
                             <select
                                 id="category"
@@ -91,7 +91,7 @@
                                 v-model="form.category"
                             >
                                 <option
-                                    v-for="category in categories"
+                                    v-for="category in filteredCategories"
                                     :value="category.id"
                                     :key="category.id"
                                 >
@@ -131,7 +131,7 @@ export default {
             category: ''
         }),
         brands: [],
-        categories: []
+        // categories: []
     }),
     methods: {
         // delete
@@ -251,7 +251,25 @@ export default {
     computed: {
         ...mapGetters ({
             user: 'getUser'
-        })
+        }),
+        // filter categories with brand_id
+        filteredCategories() {
+            let f_category
+
+            if(this.form.brand !== this.product.brand_id) {
+                this.form.category = ''
+            } else {
+                this.form.category = this.product.category_id
+            }
+
+            this.brands.forEach(brand => {
+                if(brand.id == this.form.brand) {
+                    f_category = brand.categories
+                }
+            })
+
+            return f_category
+        }
     },
     created() {
         if(!this.user.role == '0') {
@@ -274,15 +292,15 @@ export default {
                 })
 
             // get categories
-            axios.get('/api/categories')
-                .then(res => {
-                    // console.log('categories:', res.data)
+            // axios.get('/api/categories')
+            //     .then(res => {
+            //         // console.log('categories:', res.data)
 
-                    this.categories = res.data.categories
-                })
-                .catch(err => {
-                    console.log(err)
-                })
+            //         this.categories = res.data.categories
+            //     })
+            //     .catch(err => {
+            //         console.log(err)
+            //     })
         }
     }
 }

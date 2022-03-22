@@ -46,7 +46,7 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
         return $this->belongsTo(Role::class);
     }
 
-    public function carts()
+    public function cart_items()
     {
         return $this->hasMany(Cart::class);
     }

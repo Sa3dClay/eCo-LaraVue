@@ -2,10 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\Http\Requests\AddProductRequest;
-use App\Http\Requests\UpdateProductRequest;
-
 class AdminController extends Controller
 {
     public function __construct()
@@ -31,31 +27,5 @@ class AdminController extends Controller
         return response()->json([
             'categories' => $categories
         ], 200);
-    }
-
-    // Products
-
-    public function getProduct($id)
-    {
-        $product = (new ProductController)->getProduct($id);
-
-        return response()->json([
-            'product' => $product
-        ], 200);
-    }
-
-    public function addProduct(AddProductRequest $req)
-    {
-        (new ProductController)->addProduct($req);
-    }
-
-    public function updateProduct($id, UpdateProductRequest $req)
-    {
-        (new ProductController)->updateProduct($id, $req);
-    }
-
-    public function deleteProduct($id)
-    {
-        (new ProductController)->deleteProduct($id);
     }
 }

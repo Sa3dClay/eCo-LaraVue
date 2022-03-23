@@ -3,13 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Models\Brand;
-// use Illuminate\Http\Request;
 
 class BrandController extends Controller
 {
-    public function getBrands() {
+    public function index() {
         $brands = Brand::with('categories')->get();
 
-        return $brands;
+        return response()->json([
+            'brands' => $brands
+        ], 200);
     }
 }

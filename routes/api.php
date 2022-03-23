@@ -2,7 +2,9 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CartController;
+use App\Http\Controllers\BrandController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\CategoryController;
 
 // Auth
 Route::prefix('auth')->group(function () {
@@ -29,10 +31,10 @@ Route::prefix('auth')->group(function () {
 // Admin
 Route::middleware(['isAdmin'])->group(function () {
     // Brands
-    Route::get('/brands', 'AdminController@getBrands');
+    Route::get('/brands', [BrandController::class, 'index']);
     
     // Categories
-    Route::get('/categories', 'AdminController@getCategories');
+    Route::get('/categories', [CategoryController::class, 'index']);
 
     // Products
     Route::prefix('products')->group(function () {

@@ -192,8 +192,6 @@ export default {
                 })
         },
         notInCart(id) {
-            // console.log(id)
-
             var check = true
 
             this.cartProducts.forEach(product => {
@@ -243,7 +241,7 @@ export default {
             // get products
             axios.get('/api/products')
                 .then(res => {
-                    // console.log(res.data)
+                    // console.log("/products", res.data)
 
                     this.products = res.data.products
                 })
@@ -265,7 +263,7 @@ export default {
             // get cart products
             axios.get('/api/cart')
                 .then(res => {
-                    // console.log(res.data)
+                    // console.log("/cart", res.data)
 
                     this.cartProducts = res.data.products
                 })

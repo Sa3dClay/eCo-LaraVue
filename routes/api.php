@@ -1,6 +1,10 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\CartController;
+use App\Http\Controllers\BrandController;
+use App\Http\Controllers\ProductController;
+use App\Http\Controllers\CategoryController;
 
 // Auth
 Route::prefix('auth')->group(function () {
@@ -27,29 +31,29 @@ Route::prefix('auth')->group(function () {
 // Admin
 Route::middleware(['isAdmin'])->group(function () {
     // Brands
-    Route::get('/brands', 'AdminController@getBrands');
+    Route::get('/brands', [BrandController::class, 'index']);
     
     // Categories
-    Route::get('/categories', 'AdminController@getCategories');
+    Route::get('/categories', [CategoryController::class, 'index']);
 
     // Products
     Route::prefix('products')->group(function () {
-        Route::get('/{id}', 'AdminController@getProduct');
-        Route::post('/create', 'AdminController@addProduct');
-        Route::post('/edit/{id}', 'AdminController@updateProduct');
-        Route::delete('/delete/{id}', 'AdminController@deleteProduct');
+        Route::get('/{id}', [ProductController::class, 'find']);
+        Route::post('/create', [ProductController::class, 'store']);
+        Route::post('/edit/{id}', [ProductController::class, 'update']);
+        Route::delete('/delete/{id}', [ProductController::class, 'delete']);
     });
 });
 
 // Customer
 Route::middleware(['auth:api'])->group(function () {
     // Products
-    Route::get('/products', 'CustomerController@getProducts');
+    Route::get('/products', [ProductController::class, 'index']);
 
     // Cart
     Route::prefix('/cart')->group(function () {
-        Route::get('/', 'CustomerController@getCartProducts');
-        Route::post('/add', 'CustomerController@addCartProduct');
-        Route::delete('/delete/{id}', 'CustomerController@deleteCartProduct');
+        Route::get('/', [CartController::class, 'index']);
+        Route::post('/add', [CartController::class, 'store']);
+        Route::delete('/delete/{id}', [CartController::class, 'delete']);
     });
 });

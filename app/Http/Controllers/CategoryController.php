@@ -3,13 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Models\Category;
-use Illuminate\Http\Request;
 
 class CategoryController extends Controller
 {
-    public function getCategories() {
+    public function index() {
         $categories = Category::with('brands')->get();
 
-        return $categories;
+        return response()->json([
+            'categories' => $categories
+        ], 200);
     }
 }

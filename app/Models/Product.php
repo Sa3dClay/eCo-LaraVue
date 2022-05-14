@@ -26,4 +26,20 @@ class Product extends Model
     {
         return $this->belongsTo(Category::class);
     }
+
+    /**
+     * @return brand_name
+     */
+    public function getBrandNameAttribute()
+    {
+        return $this->brand->name;
+    }
+
+    /**
+     * @return category_name
+     */
+    public function getCategoryNameAttribute()
+    {
+        return $this->category->name;
+    }
 }

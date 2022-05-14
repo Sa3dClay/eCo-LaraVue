@@ -2,56 +2,33 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Cart;
-// use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Http\Request;
+use App\Services\CartService;
+use App\Services\ProductService;
+use Illuminate\Support\Facades\Auth;
 
 class CartController extends Controller
 {
-    /**
-     * add product to cart with user_id & product_id
-     * get product details (brand & category)
-     * return product to update store (in cart button)
-     */
-    public function addCartProduct($user_id, $product_id)
+    private $cartService;
+    private $productService;
+
+    public function __construct(CartService $cartService, ProductService $productService)
     {
-        Cart::create([
-            'user_id'       =>  $user_id,
-            'product_id'    =>  $product_id
-        ]);
-
-        $mode = 'name';
-        
-        $product = (new ProductController)->getProduct($product_id, $mode);
-
-        return $product;
+        $this->cartService = $cartService;
+        $this->productService = $productService;
     }
 
-    /**
-     * get all products from user cart by user_id
-     * get details (brand & category) for each product
-     */
-    public function getCartProducts($carts)
+    public function index()
     {
-        $products = array();
-        $mode = 'name';
-
-        foreach($carts as $cart) {
-            $product = (new ProductController)->getProduct($cart->product_id, $mode);
-
-            array_push($products, $product);
-        }
-
-        return $products;
+        return $this->cartService->getCartProducts(Auth::user()->cart_items, $this->productService);
     }
 
-    /**
-     * delete product from cart using user_id & product_id
-     */
-    public function deleteCartProduct($user_id, $product_id)
+    public function store(Request $request)
     {
-        Cart::where('product_id', $product_id)
-            ->where('user_id', $user_id)
-            ->delete();
+        return $this->cartService->addProductToCart(Auth::id(), $request->id, $this->productService);
+    }
+
+    public function delete($product_id) {
+        $this->cartService->deleteProductFromCart(Auth::id(), $product_id);
     }
 }
